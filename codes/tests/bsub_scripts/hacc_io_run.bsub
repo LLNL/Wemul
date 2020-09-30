@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -nnodes 16
+#BSUB -W 120
+
+min_nodes=1
+max_nodes=16
+max_iteration=5
+tasks_per_node=8
+output_dir=/p/gpfs1/chowdhur/io_playground/hacc_out
+hacc_io_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/tests/benchmarks/HACC_IO_KERNEL/HACC_IO
+num_particles_per_rank=512
+
+num_nodes=$min_nodes
+
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    iteration=1
+    while [ $iteration -le $max_iteration ]
+    do
+        printf "\nIteration: "
+        echo $iteration
+        printf "\n"
+        current_out_dir=$output_dir.$num_nodes.$iteration
+        mkdir -p $current_out_dir
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $hacc_io_executable $num_particles_per_rank $current_out_dir
+        ls -lh $current_out_dir
+        rm -rf $current_out_dir
+        iteration=$((iteration+1))
+    done
+    num_nodes=$((num_nodes*2))
+done

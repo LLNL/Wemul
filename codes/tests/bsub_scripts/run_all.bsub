@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -nnodes 16
+#BSUB -W 480
+
+bash dag_emulate.bsub
+bash hacc_io_run.bsub
+

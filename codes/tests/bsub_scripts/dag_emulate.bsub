@@ -1,0 +1,38 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -nnodes 16
+#BSUB -W 360
+
+min_nodes=1
+max_nodes=16
+max_iteration=5
+tasks_per_node=8
+input_dir=/p/gpfs1/chowdhur/io_playground
+data_dir=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/dfman/codes/workflows/task_based/processed
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+
+export LD_LIBRARY_PATH=/opt/ibm/bb/lib:/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
+
+num_nodes=$min_nodes
+
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    total_task=$((num_nodes*tasks_per_node))
+    dag_filename=$data_dir/${num_nodes}_node_${total_task}_proc
+    iteration=1
+    while [ $iteration -le $max_iteration ]
+    do
+        printf "\nIteration: "
+        echo $iteration
+        printf "\n"
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype dag --dag_file $dag_filename --input_dir $input_dir --block_size 268435456 --segment_count 128
+        rm -rf $input_dir/*
+        iteration=$((iteration+1))
+    done
+    num_nodes=$((num_nodes*2))
+done

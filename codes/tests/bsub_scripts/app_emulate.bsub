@@ -1,0 +1,109 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -nnodes 16
+#BSUB -W 240
+
+generate_file_list()
+{
+    local file_prefix=$1
+    local start_fileno=$2
+    local num_of_files=$3
+    local end_fileno=$((start_fileno + num_of_files - 1))
+    local fileno=$start_fileno
+    local filelist=
+    while [ $fileno -le $end_fileno ]
+    do
+        filelist=$filelist$file_prefix$fileno
+        if [ $fileno -ne $end_fileno ]
+        then
+            filelist=$filelist:
+        fi
+        fileno=$((fileno+1))
+    done
+    echo $filelist
+}
+
+min_nodes=1
+max_nodes=16
+tasks_per_node=8
+input_dir=/p/gpfs1/chowdhur/io_playground
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+
+num_nodes=$min_nodes
+export LD_LIBRARY_PATH=/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
+
+file_per_process_read=--file_per_process_read
+file_per_process_write=--file_per_process_write
+num_ck_ranks=1
+num_ck_files_per_rank=1
+ck_error_rate=10
+checkpointing_interval=2
+num_ck_iter=1000
+read_block_size=268435456
+read_segment_count=128
+
+min_iteration=1
+max_iteration=5
+
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    iteration=$min_iteration
+    while [ $iteration -le $max_iteration ]
+    do
+        printf "\nIteration: "
+        echo $iteration
+        printf "\n"
+
+        # Stage 1
+        # shared write num_nodes * tasks_per_node / 2 files of 32G size
+        write_block_size=268435456
+        write_segment_count=128
+        file_prefix=D
+        start_fileno=1
+        num_of_files=$((num_nodes * tasks_per_node / 2))
+        write_filenames=$(generate_file_list $file_prefix $start_fileno $num_of_files)
+        echo "Stage1: write Filenames: "$write_filenames
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype app --input_dir $input_dir --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames
+
+        # Stage 2
+        # shared read the files written by the earlier app;
+        # write file-per-process num_nodes * tasks_per_node files of 16G
+        read_filenames=$write_filenames
+        read_block_size=268435456
+        read_segment_count=128
+        file_prefix=D
+        start_fileno=$((start_fileno + num_of_files))
+        num_of_files=$((num_nodes * tasks_per_node))
+        write_filenames=$(generate_file_list $file_prefix $start_fileno $num_of_files)
+        write_block_size=268435456
+        write_segment_count=64
+        echo "Stage2: read Filenames: "$read_filenames
+        echo "Stage2: write Filenames: "$write_filenames
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype app --input_dir $input_dir --read_block_size $read_block_size --read_segment_count $read_segment_count --read_filenames $read_filenames --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames $file_per_process_write
+    
+        # Stage 3
+        # file-per-process read the files written by the earlier app;
+        # shared write num_nodes * tasks_per_node / 2 files of 32G
+        read_filenames=$write_filenames
+        read_block_size=268435456
+        read_segment_count=64
+        file_prefix=D
+        start_fileno=$((start_fileno + num_of_files))
+        num_of_files=$((num_nodes * tasks_per_node / 2))
+        write_filenames=$(generate_file_list $file_prefix $start_fileno $num_of_files)
+        write_block_size=268435456
+        write_segment_count=128
+        echo "Stage3: read Filenames: "$read_filenames
+        echo "Stage3: write Filenames: "$write_filenames
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype app --input_dir $input_dir --read_block_size $read_block_size --read_segment_count $read_segment_count --read_filenames $read_filenames $file_per_process_read --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames
+
+        rm -rf $input_dir/*
+        iteration=$((iteration+1))
+    done
+    num_nodes=$((num_nodes*2))
+done

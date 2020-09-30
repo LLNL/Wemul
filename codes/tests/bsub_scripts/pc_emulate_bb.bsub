@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -W 120
+
+min_nodes=1
+max_nodes=16
+tasks_per_node=4
+input_dir=$BBPATH
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+export LD_LIBRARY_PATH=/opt/ibm/bb/lib:/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
+
+num_nodes=$min_nodes
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node
+    #lrun -N$num_nodes -T$tasks_per_node ls -l $input_dir/*
+    #ls -l $input_dir
+    lrun -N$num_nodes -T$tasks_per_node rm -rf $input_dir/*
+    num_nodes=$((num_nodes*2))
+done

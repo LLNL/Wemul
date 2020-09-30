@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -nnodes 16
+#BSUB -W 300
+
+min_nodes=1
+max_nodes=16
+tasks_per_node=8
+input_dir=/p/gpfs1/chowdhur/io_playground
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+
+num_nodes=$min_nodes
+export LD_LIBRARY_PATH=/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
+
+num_ck_ranks=1
+num_ck_files_per_rank=1
+ck_error_rate=10
+checkpointing_interval=2
+num_ck_iter=1000
+block_size=268435456
+segment_count=128
+
+min_iteration=1
+max_iteration=5
+
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    iteration=$min_iteration
+    while [ $iteration -le $max_iteration ]
+    do
+        printf "\nIteration: "
+        echo $iteration
+        printf "\n"
+        # num_ck_ranks=$((num_nodes*tasks_per_node))
+        # num_ck_files_per_rank=10
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype cr --block_size $block_size --segment_count $segment_count --input_dir $input_dir --num_ck_ranks $num_ck_ranks --num_ck_files_per_rank $num_ck_files_per_rank --ck_error_rate $ck_error_rate --checkpointing_interval $checkpointing_interval --num_ck_iter $num_ck_iter
+        rm -rf $input_dir/*
+        iteration=$((iteration+1))
+    done
+    num_nodes=$((num_nodes*2))
+done

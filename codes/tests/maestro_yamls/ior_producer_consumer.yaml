@@ -1,0 +1,31 @@
+description:
+    name: ior_producer_consumer
+    description: Producer Consumer run on MaestroWF using IOR.
+
+env:
+    variables:
+        OUTPUT_PATH: ./sample_output/ior_producer_consumer
+
+    labels:
+        outfile: ior_producer_consumer_lassen_10_2.log
+
+study:
+
+    - name: run-producer
+      description: Run Producer.
+      run:
+          cmd: |
+              export LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so
+              echo $LD_PRELOAD
+              lrun -N 2 -T 4 /g/g91/chowdhur/codes/ior_original/ior_fresh/install/bin/ior -a MPIIO -w -F -k -b 512k -s 10 -C -o `cat /g/g91/chowdhur/ior.in` > $(outfile)
+          depends: []
+
+    - name: run-consumer
+      description: Run Consumer.
+      run:
+          cmd: |
+              export LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so
+              echo $LD_PRELOAD
+              #srun -N1 --ntasks-per-node 4 /g/g91/chowdhur/codes/ior_original/install/bin/ior -r -F -o `cat /g/g91/chowdhur/ior.in` >> $(outfile)
+              lrun -N 2 -T 4 /g/g91/chowdhur/codes/ior_original/ior_fresh/install/bin/ior -a MPIIO -r -F -b 512k -s 10 -C -o `cat /g/g91/chowdhur/ior.in` >> $(outfile)
+          depends: [run-producer]

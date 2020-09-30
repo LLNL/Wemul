@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -W 30
+
+min_nodes=1
+max_nodes=16
+tasks_per_node=4
+dataset_dir=/p/gpfs1/chowdhur/dummy_dataset
+num_epochs=5
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+lrun -N16 -T1 cp -r $dataset_dir $BBPATH
+sleep 2m
+lrun -N16 -T1 echo $BBPATH
+lrun -N16 -T1 ls -l $BBPATH/*/*
+
+num_nodes=$min_nodes
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype dl --input_dir $BBPATH/dummy_dataset --num_epochs $num_epochs
+    #lrun -N$num_nodes -T$tasks_per_node $emulator_executable --type data --subtype dl --dataset_dir $dataset_dir/$num_nodes
+    num_nodes=$((num_nodes*2))
+done

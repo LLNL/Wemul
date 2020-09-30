@@ -1,0 +1,47 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -q pbatch
+#BSUB -W 360
+
+min_nodes=1
+max_nodes=16
+tasks_per_node=4
+stage_dir=$BBPATH
+input_dir=/p/gpfs1/chowdhur/io_playground
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+
+num_nodes=$min_nodes
+export LD_LIBRARY_PATH=/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
+
+num_ck_ranks=1
+num_ck_files_per_rank=1
+ck_error_rate=10
+checkpointing_interval=2
+num_ck_iter=10000
+stage_out_steps=10
+block_size=1000000
+segment_count=100
+
+axl_transfer_type_default=1
+axl_transfer_type_sync=2
+axl_transfer_type_async_daemon=3
+axl_transfer_type_async_dw=4
+axl_transfer_type_async_bbapi=5
+axl_transfer_type_async_cppr=6
+axl_transfer_type_native=7
+axl_transfer_type_pthread=8
+
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    # num_ck_ranks=$((num_nodes*tasks_per_node))
+
+    lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype cr --enable_staging --use_axl --block_size $block_size --segment_count $segment_count --stage_dir $stage_dir --input_dir $input_dir --num_ck_ranks $num_ck_ranks --num_ck_files_per_rank $num_ck_files_per_rank --ck_error_rate $ck_error_rate --checkpointing_interval $checkpointing_interval --stage_out_steps $stage_out_steps --axl_xfer_type $axl_transfer_type_sync --num_ck_iter $num_ck_iter
+
+    #rm -rf $stage_dir/*
+    rm -rf $input_dir/*
+    num_nodes=$((num_nodes*2))
+done

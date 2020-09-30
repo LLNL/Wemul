@@ -1,0 +1,38 @@
+description:
+    name: emulator_producer_consumer
+    description: Producer Consumer run on MaestroWF using Emulator.
+
+env:
+    variables:
+        OUTPUT_PATH: ./sample_output/emulator_producer_consumer
+
+    labels:
+        outfile: emulator_producer_consumer_lassen.log
+
+study:
+
+    - name: run-producer
+      description: Run Producer.
+      run:
+          cmd: |
+              num_nodes=16
+              tasks_per_node=4
+              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+              input_dir=$BBPATH
+              inter_node=
+              producer_only=--producer_only
+              lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node $inter_node $producer_only > $(outfile)
+          depends: []
+
+    - name: run-consumer
+      description: Run Consumer.
+      run:
+          cmd: |
+              num_nodes=16
+              tasks_per_node=4
+              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+              input_dir=$BBPATH
+              inter_node=
+              consumer_only=--consumer_only
+              lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node $inter_node $consumer_only >> $(outfile)
+          depends: [run-producer]

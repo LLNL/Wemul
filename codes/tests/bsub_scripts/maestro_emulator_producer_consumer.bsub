@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#BSUB -G asccasc
+#BSUB -nnodes 16
+#BSUB -q pbatch
+#BSUB -W 120
+
+min_nodes=16
+max_nodes=16
+tasks_per_node=4
+
+source /g/g91/chowdhur/maestro_venv/bin/activate
+
+num_nodes=$min_nodes
+while [ $num_nodes -le $max_nodes ]
+do
+    printf "\nNum Clients: "
+    echo $num_nodes
+    printf "\n"
+    maestro run --autoyes -o /g/g91/chowdhur/codes/hawk_gitlab/workflow_emulator/codes/tests/maestro_yamls/emulator_prod_cons_1 /g/g91/chowdhur/codes/hawk_gitlab/workflow_emulator/codes/tests/maestro_yamls/emulator_producer_consumer.yaml
+    maestro status /g/g91/chowdhur/codes/hawk_gitlab/workflow_emulator/codes/tests/maestro_yamls/emulator_prod_cons_1
+    num_nodes=$((num_nodes*2))
+done
