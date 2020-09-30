@@ -1,0 +1,13 @@
+# build related
+*/build/
+*.o
+*.po
+*.a
+*.so
+
+# OS related
+.DS_Store
+
+# IDE related
+*.code-*
+.vscode
