@@ -2,7 +2,9 @@
 #include <iostream>
 #include <math.h>
 #include <sstream>
+#include <stdlib.h>
 
+#include "dag_parser.hpp"
 #include "dag_workload.hpp"
 #include "ior_runner.hpp"
 #include "utils.hpp"
@@ -25,6 +27,9 @@ dag_workload::dag_workload(bool use_ior,
     m_dag_filepath = dag_filepath;
     m_block_size = block_size;
     m_segment_count = segment_count;
+    m_dag_parser = std::make_shared<dag_parser>(dag_filepath);
+    m_dag_parser->parse_file();
+    m_dag_parser->extract_dag();
 }
 
 dag_workload::~dag_workload()
@@ -132,7 +137,14 @@ void dag_workload::emulate(int argc, char** argv)
 
 void dag_workload::single_task_single_data()
 {
-    std::vector<std::string> _params = {"ior", "-a", "MPIIO"};
+    char* _ior_path_env = getenv("IOR_PATH");
+    std::string _ior_path;
+    if(_ior_path_env) _ior_path = _ior_path_env;
+    if (_ior_path.empty())
+    {
+        std::cout << "ERROR: IOR_PATH not set!" << std::endl;
+    }
+    std::vector<std::string> _params = {_ior_path, "-a", "MPIIO"};
     if (m_dag_workload_access_type == workload_access_types::e_read)
     {
         _params.push_back("-r");
@@ -157,7 +169,14 @@ void dag_workload::single_task_multi_data()
 
 void dag_workload::multi_task_single_data()
 {
-    std::vector<std::string> _params = {"ior", "-a", "MPIIO"};
+    char* _ior_path_env = getenv("IOR_PATH");
+    std::string _ior_path;
+    if(_ior_path_env) _ior_path = _ior_path_env;
+    if (_ior_path.empty())
+    {
+        std::cout << "ERROR: IOR_PATH not set!" << std::endl;
+    }
+    std::vector<std::string> _params = {_ior_path, "-a", "MPIIO"};
     if (m_dag_workload_access_type == workload_access_types::e_read)
     {
         _params.push_back("-r");

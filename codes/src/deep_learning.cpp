@@ -4,6 +4,7 @@
 #include <iostream>
 #include <mpi.h>
 #include <sstream>
+#include <stdlib.h>
 #include <thread>
 
 #include "ior_runner.hpp"
@@ -30,7 +31,14 @@ void deep_learning::emulate(int argc, char** argv)
 {
     if (m_use_ior)
     {
-        std::vector<std::string> _params = {"ior", "-a", "MPIIO", "-$", "-#", m_directory};
+        char* _ior_path_env = getenv("IOR_PATH");
+        std::string _ior_path;
+        if(_ior_path_env) _ior_path = _ior_path_env;
+        if (_ior_path.empty())
+        {
+            std::cout << "ERROR: IOR_PATH not set!" << std::endl;
+        }
+        std::vector<std::string> _params = {_ior_path, "-a", "MPIIO", "-$", "-#", m_directory};
         ior_runner _ior_runner(_params);
         for(int i = 0; i < m_num_epochs; i++)
         {

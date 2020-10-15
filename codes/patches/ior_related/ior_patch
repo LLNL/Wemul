@@ -1,181 +1,12 @@
-diff --git a/src/aiori-DUMMY.c b/src/aiori-DUMMY.c
-index 0494cb4..2357bd6 100755
---- a/src/aiori-DUMMY.c
-+++ b/src/aiori-DUMMY.c
-@@ -150,7 +150,7 @@ ior_aiori_t dummy_aiori = {
-         .open = DUMMY_Open,
-         .xfer = DUMMY_Xfer,
-         .close = DUMMY_Close,
--        .delete = DUMMY_Delete,
-+        ._delete = DUMMY_Delete,
-         .get_version = DUMMY_getVersion,
-         .fsync = DUMMY_Fsync,
-         .get_file_size = DUMMY_GetFileSize,
-diff --git a/src/aiori-HDF5.c b/src/aiori-HDF5.c
-index ab329db..8d14dec 100755
---- a/src/aiori-HDF5.c
-+++ b/src/aiori-HDF5.c
-@@ -131,7 +131,7 @@ ior_aiori_t hdf5_aiori = {
-         .open = HDF5_Open,
-         .xfer = HDF5_Xfer,
-         .close = HDF5_Close,
--        .delete = HDF5_Delete,
-+        ._delete = HDF5_Delete,
-         .get_version = HDF5_GetVersion,
-         .fsync = HDF5_Fsync,
-         .get_file_size = HDF5_GetFileSize,
-diff --git a/src/aiori-HDFS.c b/src/aiori-HDFS.c
-index 2d4dcb1..1bb3812 100755
---- a/src/aiori-HDFS.c
-+++ b/src/aiori-HDFS.c
-@@ -120,7 +120,7 @@ ior_aiori_t hdfs_aiori = {
- 	.open = HDFS_Open,
- 	.xfer = HDFS_Xfer,
- 	.close = HDFS_Close,
--	.delete = HDFS_Delete,
-+	._delete = HDFS_Delete,
- 	.set_version = HDFS_SetVersion,
- 	.fsync = HDFS_Fsync,
- 	.get_file_size = HDFS_GetFileSize,
-@@ -544,7 +544,7 @@ static void HDFS_Close( void *fd, IOR_param_t * param ) {
- /*
-  * Delete a file through the HDFS interface.
-  *
-- * NOTE: The signature for ior_aiori.delete doesn't include a parameter to
-+ * NOTE: The signature for ior_aiori._delete doesn't include a parameter to
-  * select recursive deletes.  We'll assume that that is never needed.
-  */
- static void HDFS_Delete( char *testFileName, IOR_param_t * param ) {
-diff --git a/src/aiori-IME.c b/src/aiori-IME.c
-index b6cef34..4ae4db6 100755
---- a/src/aiori-IME.c
-+++ b/src/aiori-IME.c
-@@ -95,7 +95,7 @@ ior_aiori_t ime_aiori = {
-         .open          = IME_Open,
-         .xfer          = IME_Xfer,
-         .close         = IME_Close,
--        .delete        = IME_Delete,
-+        ._delete        = IME_Delete,
-         .get_version   = IME_GetVersion,
-         .fsync         = IME_Fsync,
-         .get_file_size = IME_GetFileSize,
-diff --git a/src/aiori-MMAP.c b/src/aiori-MMAP.c
-index 7be860a..551bf52 100644
---- a/src/aiori-MMAP.c
-+++ b/src/aiori-MMAP.c
-@@ -42,7 +42,7 @@ ior_aiori_t mmap_aiori = {
-         .open = MMAP_Open,
-         .xfer = MMAP_Xfer,
-         .close = MMAP_Close,
--        .delete = POSIX_Delete,
-+        ._delete = POSIX_Delete,
-         .get_version = aiori_get_version,
-         .fsync = MMAP_Fsync,
-         .get_file_size = POSIX_GetFileSize,
-diff --git a/src/aiori-MPIIO.c b/src/aiori-MPIIO.c
-index 6bf991b..cdc74b4 100755
---- a/src/aiori-MPIIO.c
-+++ b/src/aiori-MPIIO.c
-@@ -51,7 +51,7 @@ ior_aiori_t mpiio_aiori = {
-         .open = MPIIO_Open,
-         .xfer = MPIIO_Xfer,
-         .close = MPIIO_Close,
--        .delete = MPIIO_Delete,
-+        ._delete = MPIIO_Delete,
-         .get_version = MPIIO_GetVersion,
-         .fsync = MPIIO_Fsync,
-         .get_file_size = MPIIO_GetFileSize,
-diff --git a/src/aiori-NCMPI.c b/src/aiori-NCMPI.c
-index 3607466..efe5aaa 100755
---- a/src/aiori-NCMPI.c
-+++ b/src/aiori-NCMPI.c
-@@ -67,7 +67,7 @@ ior_aiori_t ncmpi_aiori = {
-         .open = NCMPI_Open,
-         .xfer = NCMPI_Xfer,
-         .close = NCMPI_Close,
--        .delete = NCMPI_Delete,
-+        ._delete = NCMPI_Delete,
-         .get_version = NCMPI_GetVersion,
-         .fsync = NCMPI_Fsync,
-         .get_file_size = NCMPI_GetFileSize,
-diff --git a/src/aiori-POSIX.c b/src/aiori-POSIX.c
-index d78cd40..17a2b48 100755
---- a/src/aiori-POSIX.c
-+++ b/src/aiori-POSIX.c
-@@ -111,7 +111,7 @@ ior_aiori_t posix_aiori = {
-         .open = POSIX_Open,
-         .xfer = POSIX_Xfer,
-         .close = POSIX_Close,
--        .delete = POSIX_Delete,
-+        ._delete = POSIX_Delete,
-         .get_version = aiori_get_version,
-         .fsync = POSIX_Fsync,
-         .get_file_size = POSIX_GetFileSize,
-diff --git a/src/aiori-RADOS.c b/src/aiori-RADOS.c
-index 090414d..49763f0 100755
---- a/src/aiori-RADOS.c
-+++ b/src/aiori-RADOS.c
-@@ -72,7 +72,7 @@ ior_aiori_t rados_aiori = {
-         .open = RADOS_Open,
-         .xfer = RADOS_Xfer,
-         .close = RADOS_Close,
--        .delete = RADOS_Delete,
-+        ._delete = RADOS_Delete,
-         .get_version = aiori_get_version,
-         .fsync = RADOS_Fsync,
-         .get_file_size = RADOS_GetFileSize,
-diff --git a/src/aiori-S3.c b/src/aiori-S3.c
-index 3fc1208..16d00b6 100755
---- a/src/aiori-S3.c
-+++ b/src/aiori-S3.c
-@@ -172,7 +172,7 @@ ior_aiori_t s3_aiori = {
- 	.open = S3_Open,
- 	.xfer = S3_Xfer,
- 	.close = S3_Close,
--	.delete = S3_Delete,
-+	._delete = S3_Delete,
- 	.get_version = aiori_get_version,
- 	.fsync = S3_Fsync,
- 	.get_file_size = S3_GetFileSize,
-@@ -189,7 +189,7 @@ ior_aiori_t s3_plus_aiori = {
- 	.open = S3_Open,
- 	.xfer = S3_Xfer,
- 	.close = S3_Close,
--	.delete = S3_Delete,
-+	._delete = S3_Delete,
- 	.set_version = S3_SetVersion,
- 	.fsync = S3_Fsync,
- 	.get_file_size = S3_GetFileSize,
-@@ -206,7 +206,7 @@ ior_aiori_t s3_emc_aiori = {
- 	.open = EMC_Open,
- 	.xfer = EMC_Xfer,
- 	.close = EMC_Close,
--	.delete = S3_Delete,
-+	._delete = S3_Delete,
- 	.set_version = S3_SetVersion,
- 	.fsync = S3_Fsync,
- 	.get_file_size = S3_GetFileSize,
-diff --git a/src/aiori.h b/src/aiori.h
-index c2074c2..baebf44 100755
---- a/src/aiori.h
-+++ b/src/aiori.h
-@@ -73,7 +73,7 @@ typedef struct ior_aiori {
-         IOR_offset_t (*xfer)(int, void *, IOR_size_t *,
-                              IOR_offset_t, IOR_param_t *);
-         void (*close)(void *, IOR_param_t *);
--        void (*delete)(char *, IOR_param_t *);
-+        void (*_delete)(char *, IOR_param_t *);
-         char* (*get_version)();
-         void (*fsync)(void *, IOR_param_t *);
-         IOR_offset_t (*get_file_size)(IOR_param_t *, MPI_Comm, char *);
 diff --git a/src/ior.c b/src/ior.c
-index 3ef411c..0e31d8f 100755
+index e9d6c20..f4400d9 100644
 --- a/src/ior.c
 +++ b/src/ior.c
-@@ -58,6 +58,17 @@ static IOR_offset_t WriteOrRead(IOR_param_t *test, IOR_results_t *results,
-                                 void *fd, const int access,
-                                 IOR_io_buffers *ioBuffers);
+@@ -81,6 +81,20 @@ static void ValidTests(IOR_param_t *);
+ static IOR_offset_t WriteOrRead(IOR_param_t *, void *, int);
+ static void WriteTimes(IOR_param_t *, double **, int, int);
  
++// Wemul start
 +#include <dirent.h>
 +static char* filepaths_with_delimiter;
 +static int filepaths_len;
@@ -183,45 +14,63 @@ index 3ef411c..0e31d8f 100755
 +static char** global_filenames;
 +static void RecursiveListFiles(const char* directory);
 +static void ReadSpecificFile(char* testFileName, IOR_test_t *test,
-+                                IOR_io_buffers* ioBuffers, int rep,
-+                                double* timer, void* fd,
++                                int rep,
++                                double** timer,
++                                void* fd,
 +                                IOR_offset_t dataMoved);
++// Wemul end
 +
- IOR_test_t * ior_run(int argc, char **argv, MPI_Comm world_com, FILE * world_out){
-         IOR_test_t *tests_head;
-         IOR_test_t *tptr;
-@@ -109,6 +120,14 @@ int ior_main(int argc, char **argv)
-      */
-     tests_head = ParseCommandLine(argc, argv);
+ /********************************** M A I N ***********************************/
  
-+    if (tests_head->params.filesPerProc) {
-+        RecursiveListFiles(tests_head->params.input_directory);
-+        // curtail the last character
-+        filepaths_with_delimiter[filepaths_len - 2] = '\0';
-+        int count;
-+        global_filenames = ParseFileName(filepaths_with_delimiter, &count);
-+    }
+ int main(int argc, char **argv)
+@@ -129,6 +143,16 @@ int main(int argc, char **argv)
+ 
+ 	PrintHeader(argc, argv);
+ 
++        // Wemul start
++        if (tests_head->params.filesPerProc) {
++                RecursiveListFiles(tests_head->params.inputDir);
++                // curtail the last character
++                filepaths_with_delimiter[filepaths_len - 2] = '\0';
++                int count;
++                global_filenames = ParseFileName(filepaths_with_delimiter, &count);
++        }
++        // Wemul end
 +
-     /* start the MPI code */
-     MPI_CHECK(MPI_Init(&argc, &argv), "cannot initialize MPI");
+         /* perform each test */
+ 	for (tptr = tests_head; tptr != NULL; tptr = tptr->next) {
+                 verbose = tptr->params.verbose;
+@@ -154,6 +178,11 @@ int main(int argc, char **argv)
  
-@@ -161,6 +180,9 @@ int ior_main(int argc, char **argv)
+ 	DestroyTests(tests_head);
  
-     DestroyTests(tests_head);
- 
-+    free(filepaths_with_delimiter);
-+    free(global_filenames);
++        // Wemul start
++        free(filepaths_with_delimiter);
++        free(global_filenames);
++        // Wemul end
 +
-     return totalErrorCount;
- }
+         MPI_CHECK(MPI_Finalize(), "cannot finalize MPI");
  
-@@ -764,8 +786,14 @@ void GetTestFileName(char *testFileName, IOR_param_t * test)
+         return (totalErrorCount);
+@@ -729,7 +758,10 @@ static void DisplayUsage(char **argv)
+                 " -X N  reorderTasksRandomSeed -- random seed for -Z option",
+                 " -Y    fsyncPerWrite -- perform fsync after each POSIX write",
+                 " -z    randomOffset -- access is to random, not sequential, offsets within a file",
+-                " -Z    reorderTasksRandom -- changes task ordering to random ordering for readback",
++                // Wemul start
++                " -$    filesPerProc -- multiple files per process",
++                " -#    inputDir -- input directory to traverse files from",
++                // Wemul end
+                 " ",
+                 "         NOTE: S is a string, N is an integer number.",
+                 " ",
+@@ -887,8 +919,15 @@ static void GetTestFileName(char *testFileName, IOR_param_t * test)
                          strcpy(testFileNameRoot,
                                 PrependDir(test, testFileNameRoot));
                  }
 -                sprintf(testFileName, "%s.%08d", testFileNameRoot,
 -                        (rank + rankOffset) % test->numTasks);
-+
++                // Wemul start
 +                if(!test->noFilePostfix) {
 +                        sprintf(testFileName, "%s.%08d", testFileNameRoot,
 +                                (rank + rankOffset) % test->numTasks);
@@ -229,32 +78,17 @@ index 3ef411c..0e31d8f 100755
 +                        strcpy(testFileName, testFileNameRoot);
 +                        printf("Operating on file: %s\n", testFileName);
 +                }
++                // Wemul end
          } else {
                  strcpy(testFileName, testFileNameRoot);
          }
-@@ -900,7 +928,7 @@ static void RemoveFile(char *testFileName, int filePerProc, IOR_param_t * test)
-                         GetTestFileName(testFileName, test);
-                 }
-                 if (backend->access(testFileName, F_OK, test) == 0) {
--                        backend->delete(testFileName, test);
-+                        backend->_delete(testFileName, test);
-                 }
-                 if (test->reorderTasksRandom == TRUE) {
-                         rankOffset = tmpRankOffset;
-@@ -908,7 +936,7 @@ static void RemoveFile(char *testFileName, int filePerProc, IOR_param_t * test)
-                 }
-         } else {
-                 if ((rank == 0) && (backend->access(testFileName, F_OK, test) == 0)) {
--                        backend->delete(testFileName, test);
-+                        backend->_delete(testFileName, test);
-                 }
-         }
- }
-@@ -1276,6 +1304,27 @@ static void TestIoSys(IOR_test_t *test)
+@@ -2001,6 +2040,31 @@ static void TestIoSys(IOR_test_t *test)
+                 MPI_CHECK(MPI_Bcast
+                           (&params->timeStampSignatureValue, 1, MPI_UNSIGNED, 0,
                             testComm), "cannot broadcast start time value");
- 
-                 FillBuffer(ioBuffers.buffer, params, 0, pretendRank);
 +
++                // Wemul start
++                
 +                if(params->filesPerProc && !test_time_elapsed(params, startTime)) {
 +                        int num_files_per_proc = ceil(file_count / (double) numTasksWorld);
 +                        if (num_files_per_proc == 0) // if file_count is less than numTasksWorld
@@ -263,34 +97,29 @@ index 3ef411c..0e31d8f 100755
 +                        int start_id = rank * num_files_per_proc;
 +                        int end_id = start_id + num_files_per_proc - 1;
 +                        end_id = (end_id >= file_count) ? file_count - 1 : end_id;
-+                        for (int i = start_id; i <= end_id; i++)
++                        int i = start_id;
++                        for (; i <= end_id; i++)
 +                        {
-+                                // printf("RANK: %d -> %s\n", rank, global_filenames[i]);
-+                                ReadSpecificFile(global_filenames[i], test, &ioBuffers,
++                                printf("RANK: %d -> %s\n", rank, global_filenames[i]);
++                                ReadSpecificFile(global_filenames[i], test,
 +                                        rep, timer, fd, dataMoved);
 +                        }
 +                        params->errorFound = FALSE;
 +                        rankOffset = 0;
-+                        PrintRepeatEnd();
-+                        continue; // Do nothing else is N-M; TODO: need to fix it later
++                        continue; // Do nothing else if N-M; TODO: need to fix it later
 +                }
++
++                // Wemul end
 +
                  /* use repetition count for number of multiple files */
                  if (params->multiFile)
                          params->repCounter = rep;
-@@ -1488,6 +1537,7 @@ static void TestIoSys(IOR_test_t *test)
-                 } else {
-                         MPI_CHECK(MPI_Barrier(testComm), "barrier error");
-                 }
-+
-                 params->errorFound = FALSE;
-                 rankOffset = 0;
- 
-@@ -1960,3 +2010,101 @@ static IOR_offset_t WriteOrRead(IOR_param_t *test, IOR_results_t *results,
+@@ -2664,3 +2728,104 @@ WriteTimes(IOR_param_t * test, double **timer, int iteration, int writeOrRead)
+                         timerName);
          }
-         return (dataMoved);
  }
 +
++// Wemul start
 +void RecursiveListFiles(const char* directory)
 +{
 +    DIR *input_direntry;
@@ -335,8 +164,9 @@ index 3ef411c..0e31d8f 100755
 +}
 +
 +void ReadSpecificFile(char* testFileName, IOR_test_t *test,
-+                        IOR_io_buffers* ioBuffers, int rep,
-+                        double* timer, void* fd,
++                        int rep,
++                        double** timer,
++                        void* fd,
 +                        IOR_offset_t dataMoved)
 +{
 +        IOR_param_t* params = &test->params;
@@ -345,135 +175,114 @@ index 3ef411c..0e31d8f 100755
 +        int operation_flag = READ;
 +
 +        if (verbose >= VERBOSE_3) {
-+                fprintf(out_logfile, "task %d reading %s\n", rank,
++                fprintf(stdout, "task %d reading %s\n", rank,
 +                        testFileName);
 +        }
 +        DelaySecs(params->interTestDelay);
 +        MPI_CHECK(MPI_Barrier(testComm), "barrier error");
 +        params->open = READ;
-+        timer[0] = GetTimeStamp();
++        timer[0][rep] = GetTimeStamp();
 +        fd = backend->open(testFileName, params);
-+        timer[1] = GetTimeStamp();
++        timer[1][rep] = GetTimeStamp();
 +        if (params->intraTestBarriers)
 +                MPI_CHECK(MPI_Barrier(testComm),
 +                                "barrier error");
 +        if (rank == 0 && verbose >= VERBOSE_1) {
-+                fprintf(out_logfile,
++                fprintf(stdout,
 +                        "Commencing read performance test: %s",
 +                        CurrentTimeString());
 +        }
-+        timer[2] = GetTimeStamp();
-+        dataMoved = WriteOrRead(params, &results[rep], fd, operation_flag, ioBuffers);
-+        timer[3] = GetTimeStamp();
++        timer[2][rep] = GetTimeStamp();
++        dataMoved = WriteOrRead(params, fd, operation_flag);
++        timer[3][rep] = GetTimeStamp();
 +        if (params->intraTestBarriers)
 +                MPI_CHECK(MPI_Barrier(testComm),
 +                                "barrier error");
-+        timer[4] = GetTimeStamp();
++        timer[4][rep] = GetTimeStamp();
 +        backend->close(fd, params);
-+        timer[5] = GetTimeStamp();
++        timer[5][rep] = GetTimeStamp();
 +
 +        /* get the size of the file just read */
-+        results[rep].read.aggFileSizeFromStat +=
++        results->aggFileSizeFromStat[rep] +=
 +                backend->get_file_size(params, testComm,
 +                                        testFileName);
 +
 +        /* check if stat() of file doesn't equal expected file size,
 +                use actual amount of byte moved */
-+        CheckFileSize(test, dataMoved, rep, READ);
++        CheckFileSize(test, dataMoved, rep);
 +
 +        if (verbose >= VERBOSE_3)
 +                WriteTimes(params, timer, rep, READ);
 +        ReduceIterResults(test, timer, rep, READ);
 +        if (params->outlierThreshold) {
-+                CheckForOutliers(params, timer, READ);
++                CheckForOutliers(params, timer, rep, READ);
 +        }
 +}
++// Wemul end
 diff --git a/src/ior.h b/src/ior.h
-index 5c46efe..fa3589e 100755
+index 60ae944..4b44d62 100644
 --- a/src/ior.h
 +++ b/src/ior.h
-@@ -208,6 +208,11 @@ typedef struct
+@@ -128,6 +128,12 @@ typedef struct
  
      int id;                          /* test's unique ID */
      int intraTestBarriers;           /* barriers between open/op and op/close */
 +
-+    // customized options
++    // Wemul start
 +    int noFilePostfix;               /* avoid adding postfix in case of multiple files */
 +    int filesPerProc;                /* multiple files per process */
-+    char* input_directory;           /* input directory to read files from */
++    char inputDir[PATH_MAX];         /* input directory to read files from */
++    // Wemul end
  } IOR_param_t;
  
- /* each pointer for a single test */
-diff --git a/src/mdtest.c b/src/mdtest.c
-index 8613e3b..06e9955 100644
---- a/src/mdtest.c
-+++ b/src/mdtest.c
-@@ -307,7 +307,7 @@ static void remove_file (const char *path, uint64_t itemNum) {
-         fflush(out_logfile);
-     }
-     if (!(shared_file && rank != 0)) {
--        backend->delete (curr_item, &param);
-+        backend->_delete (curr_item, &param);
-     }
- }
- 
-@@ -455,7 +455,7 @@ void collective_helper(const int dirs, const int create, const char* path, uint6
-             backend->close (aiori_fh, &param);
-         } else if (!(shared_file && rank != 0)) {
-             //remove files
--            backend->delete (curr_item, &param);
-+            backend->_delete (curr_item, &param);
-         }
-         if(CHECK_STONE_WALL(progress)){
-           progress->items_done = i + 1;
-diff --git a/src/option.c b/src/option.c
-index 99f696c..7de81c4 100644
---- a/src/option.c
-+++ b/src/option.c
-@@ -64,6 +64,10 @@ static int print_value(option_help * o){
-         pos += printf("=%.14f ", *(double*) o->variable);
-         break;
-       }
-+      case('$'):{
-+        pos += printf("=%.14f ", *(double*) o->variable);
-+        break;
-+      }
-       case('f'):{
-         pos += printf("=%.6f ", (double) *(float*) o->variable);
-         break;
-@@ -152,6 +156,10 @@ static int print_option_value(option_help * o){
-         pos += printf("=%.14f ", *(double*) o->variable);
-         break;
-       }
-+      case('$'):{
-+        pos += printf("=%.14f ", *(double*) o->variable);
-+        break;
-+      }
-       case('f'):{
-         pos += printf("=%.6f ", (double) *(float*) o->variable);
-         break;
-@@ -286,6 +294,10 @@ static void option_parse_token(char ** argv, int * flag_parsed_next, int * requi
-                 *(double*) o->variable = atof(arg);
-                 break;
-               }
-+              case('$'):{
-+                *(double*) o->variable = atof(arg);
-+                break;
-+              }
-               case('f'):{
-                 *(float*) o->variable = atof(arg);
-                 break;
+ /* each pointer is to an array, each of length equal to the number of
 diff --git a/src/parse_options.c b/src/parse_options.c
-index ba72413..47a7a63 100755
+index 452bcdb..9510861 100644
 --- a/src/parse_options.c
 +++ b/src/parse_options.c
-@@ -525,6 +525,9 @@ option_help * createGlobalOptions(IOR_param_t * params){
-     {.help="  -O summaryFile=FILE                 -- store result data into this file", .arg = OPTION_OPTIONAL_ARGUMENT},
-     {.help="  -O summaryFormat=[default,JSON,CSV] -- use the format for outputing the summary", .arg = OPTION_OPTIONAL_ARGUMENT},
-     {0, "dryRun",      "do not perform any I/Os just run evtl. inputs print dummy output", OPTION_FLAG, 'd', & params->dryRun},
-+    {0, "noFilePostfix", "do not add postfix to file name for multiple files N-N read", OPTION_FLAG, 'd', & params->noFilePostfix},
-+    {'$', NULL,        "filesPerProc -- files-per-process", OPTION_FLAG, 'd', & params->filesPerProc},
-+    {'#', NULL,        "input directory to traverse files from", OPTION_OPTIONAL_ARGUMENT, 's', & params->input_directory},
-     LAST_OPTION,
-   };
-   option_help * options = malloc(sizeof(o));
+@@ -268,7 +268,19 @@ void DecodeDirective(char *line, IOR_param_t *params)
+ 		RecalculateExpectedFileSize(params);
+         } else if (strcasecmp(option, "summaryalways") == 0) {
+                 params->summary_every_test = atoi(value);
+-        } else {
++        } 
++        // Wemul start
++        else if (strcasecmp(option, "filesPerProc") == 0)
++        {
++                params->filesPerProc = TRUE;
++                params->noFilePostfix = TRUE;
++        }
++        else if (strcasecmp(option, "inputDir"))
++        {
++                strcpy(params->inputDir, value);
++        }
++        // Wemul end
++        else {
+                 if (rank == 0)
+                         fprintf(stdout, "Unrecognized parameter \"%s\"\n",
+                                 option);
+@@ -395,7 +407,7 @@ IOR_test_t *ReadConfigScript(char *scriptName)
+ IOR_test_t *ParseCommandLine(int argc, char **argv)
+ {
+         static const char *opts =
+-          "a:A:b:BcCd:D:eEf:FgG:hHi:Ij:J:kKlmM:nN:o:O:pPqQ:rRs:St:T:uU:vVwWxX:YzZ";
++          "a:A:b:BcCd:D:eEf:FgG:hHi:Ij:J:kKlmM:nN:o:O:pPqQ:rRs:St:T:uU:vVwWxX:YzZ:#:$";
+         int c, i;
+         static IOR_test_t *tests = NULL;
+ 
+@@ -564,6 +576,15 @@ IOR_test_t *ParseCommandLine(int argc, char **argv)
+                 case 'z':
+                         initialTestParams.randomOffset = TRUE;
+                         break;
++                // Wemul start
++                case '$':
++                        initialTestParams.filesPerProc = TRUE;
++                        initialTestParams.noFilePostfix = TRUE;
++                        break;
++                case '#':
++                        strcpy(initialTestParams.inputDir, optarg);
++                        break;
++                // Wemul end
+                 default:
+                         fprintf(stdout,
+                                 "ParseCommandLine: unknown option `-%c'.\n",
