@@ -22,7 +22,8 @@ int ior_runner::run()
     char** _argv = convert_params_to_argv();
     if (0 == (_pid = fork()))
     {
-        if (-1 == execve(_argv[0], (char **)_argv, NULL))
+        extern char** _environ;
+        if (-1 == execve(_argv[0], (char **)_argv, _environ))
         {
             perror("ERROR: %m process failed to execute");
             return -1;
