@@ -2,6 +2,7 @@
 #define __DAG_WORKLOAD_HPP__
 
 #include <map>
+#include <memory>
 #include <mpi.h>
 #include <string>
 #include <unordered_map>
@@ -9,6 +10,9 @@
 
 #include "dataflow_workload.hpp"
 #include "types.hpp"
+
+// forward declaration
+class dag_parser;
 
 class dag_workload : public dataflow_workload
 {
@@ -32,6 +36,8 @@ private:
     std::string m_filename;
     dag_workload_types m_dag_workload_type;
     workload_access_types m_dag_workload_access_type;
+    std::shared_ptr<dag_parser> m_dag_parser;
+
     void single_task_single_data();
     void single_task_multi_data();
     void multi_task_single_data();
