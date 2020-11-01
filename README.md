@@ -4,7 +4,7 @@ The Workflow I/O Emulation Framework (Wemul) provides an MPI-enabled
 C++ interface for emulating HPC workflow I/O workloads with the features
 for specifying data-dependencies among workflow applications and tasks.
 
-For details on its usage, see [docs/README.md](https://github.com/LLNL/Wemul/docs/blob/main/README.md).
+For details on its usage, see [docs/README.md](https://github.com/LLNL/Wemul/blob/main/docs/README.md).
 
 ## Quickstart
 ### Dependencies
@@ -46,7 +46,7 @@ An example run command with ```srun``` is as follows
 ```shell
 srun -N 2 -n 16 /path/to/emulator/executable --type data --subtype app  --read_input_dirs /path/to/gpfs:/path/to/bb --read_filenames D1:D2 --read_block_size 1048576 --read_segment_count 32768 --write_input_dirs /path/to/tmpfs:/path/to/bb --write_filenames D3:D4 --write_block_size 1048576 --write_segment_count 32768 --file_per_process_write
 ```
-List of all parameters can be found [here](https://github.com/LLNL/Wemul/docs/blob/main/README.md#functionality-and-usage).
+List of all parameters can be found [here](https://github.com/LLNL/Wemul/blob/main/docs/README.md#functionality-and-usage).
 
 ## Authors
 Created by
