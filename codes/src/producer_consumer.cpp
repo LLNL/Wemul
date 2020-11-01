@@ -1,8 +1,25 @@
+/*
+ * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Produced at the Lawrence Livermore National Laboratory.
+ * Copyright (c) 2020, Florida State University. Contributions from
+ * the Computer Architecture and Systems Research Laboratory (CASTL)
+ * at the Department of Computer Science.
+ *
+ * LLNL-CODE-816239. All rights reserved.
+ *
+ * This is the license for Wemul.
+ * For details, see https://github.com/LLNL/Wemul
+ * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
+ */
+
 #include <iostream>
 #include <math.h>
 
 #include "producer_consumer.hpp"
+#include "profiler.hpp"
 #include "utils.hpp"
+
+extern profiler g_profiler;
 
 producer_consumer::producer_consumer(std::string directory, bool inter_node,
     int num_ranks_per_node, bool producer_only, bool consumer_only,
@@ -70,6 +87,8 @@ void producer_consumer::emulate(int argc, char** argv)
 void producer_consumer::initialize_MPI(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
+
+    g_profiler.m_timer.adjust_time_deviation();
 
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -170,6 +189,10 @@ void producer_consumer::initialize_MPI(int argc, char** argv)
 
 void producer_consumer::finalize_MPI()
 {
+    if (g_profiler.m_enabled)
+    {
+        g_profiler.write_to_file();
+    }
     MPI_Group_free(&m_world_group);
 
     if (!(m_producer_only || m_consumer_only))

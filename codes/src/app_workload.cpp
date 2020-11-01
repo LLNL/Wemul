@@ -1,10 +1,26 @@
+/*
+ * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Produced at the Lawrence Livermore National Laboratory.
+ * Copyright (c) 2020, Florida State University. Contributions from
+ * the Computer Architecture and Systems Research Laboratory (CASTL)
+ * at the Department of Computer Science.
+ *
+ * LLNL-CODE-816239. All rights reserved.
+ *
+ * This is the license for Wemul.
+ * For details, see https://github.com/LLNL/Wemul
+ * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
+ */
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "app_workload.hpp"
+#include "profiler.hpp"
 #include "utils.hpp"
 
+extern profiler g_profiler;
 
 app_workload::app_workload(std::string directory,
         int block_size,
@@ -159,11 +175,16 @@ void app_workload::prepare_filename_list()
 void app_workload::initialize_MPI(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
+    g_profiler.m_timer.adjust_time_deviation();
     MPI_Comm_size(MPI_COMM_WORLD, &m_world_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &m_world_rank);
 }
 
 void app_workload::finalize_MPI()
 {
+    if (g_profiler.m_enabled)
+    {
+        g_profiler.write_to_file();
+    }
     MPI_Finalize();
 }

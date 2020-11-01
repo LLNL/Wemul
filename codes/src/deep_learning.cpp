@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Produced at the Lawrence Livermore National Laboratory.
+ * Copyright (c) 2020, Florida State University. Contributions from
+ * the Computer Architecture and Systems Research Laboratory (CASTL)
+ * at the Department of Computer Science.
+ *
+ * LLNL-CODE-816239. All rights reserved.
+ *
+ * This is the license for Wemul.
+ * For details, see https://github.com/LLNL/Wemul
+ * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
+ */
+
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -9,7 +23,10 @@
 
 #include "ior_runner.hpp"
 #include "deep_learning.hpp"
+#include "profiler.hpp"
 #include "utils.hpp"
+
+extern profiler g_profiler;
 
 deep_learning::deep_learning(std::string directory, bool use_ior,
         int num_epochs, int comp_time_per_epoch)
@@ -50,6 +67,7 @@ void deep_learning::emulate(int argc, char** argv)
     else
     {
         MPI_Init(&argc, &argv);
+        g_profiler.m_timer.adjust_time_deviation();
 
         int world_size;
         MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -81,6 +99,10 @@ void deep_learning::emulate(int argc, char** argv)
             std::this_thread::sleep_for(std::chrono::milliseconds((long) (m_comp_time_per_epoch * 1000)));
         }
 
+        if (g_profiler.m_enabled)
+        {
+            g_profiler.write_to_file();
+        }
         MPI_Finalize();
     }
 }
@@ -92,17 +114,17 @@ void deep_learning::set_directory(std::string directory)
 
 void deep_learning::populate_list_of_all_filepaths()
 {
-    // utils::recursive_listfiles(m_directory, m_filepath_list)
-    // Save time in the experiments by hard-coded directory structure
-    // Hint: In ImageNet package there is a file that has all information
-    // about the directory structure; no need to recursively traverse
-    for (int i = 0; i < 320; i++)
-    {
-       for (int j = 0; j < 1024; j++)
-       {
-           m_filepath_list.push_back(m_directory + "/subdir." + std::to_string(i) + "/data." + std::to_string(j));
-       }
-    }
+    utils::recursive_listfiles(m_directory, m_filepath_list)
+    // // Save time in the experiments by hard-coded directory structure
+    // // Hint: In ImageNet package there is a file that has all information
+    // // about the directory structure; no need to recursively traverse
+    // for (int i = 0; i < 320; i++)
+    // {
+    //    for (int j = 0; j < 1024; j++)
+    //    {
+    //        m_filepath_list.push_back(m_directory + "/subdir." + std::to_string(i) + "/data." + std::to_string(j));
+    //    }
+    // }
     for (int i = 0; i < m_filepath_list.size(); i++)
     {
         m_file_ids.push_back(i);

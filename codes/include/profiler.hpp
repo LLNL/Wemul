@@ -12,21 +12,26 @@
  * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
  */
 
-#ifndef __IOR_RUNNER_HPP__
-#define __IOR_RUNNER_HPP__
+#ifndef __PROFILER_HPP__
+#define __PROFILER_HPP__
 
 #include <string>
 #include <vector>
 
-class ior_runner
+#include "timer.hpp"
+
+class profiler
 {
 public:
-    ior_runner(std::vector<std::string> params);
-    ~ior_runner();
-    int run();
-private:
-    char** convert_params_to_argv();
-    std::vector<std::string> m_params;
+    static bool m_enabled;
+    static timer m_timer;
+    static std::string m_out_filepath;
+    static std::vector<std::pair<double, double>> m_wait_intervals;
+    static std::vector<std::pair<double, double>> m_read_intervals;
+    static std::vector<std::pair<double, double>> m_write_intervals;
+    static unsigned long long m_total_bytes_read;
+    static unsigned long long m_total_bytes_written;
+    static void write_to_file();
 };
 
-#endif // __IOR_RUNNER_HPP__
+#endif // __PROFILER_HPP__

@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Produced at the Lawrence Livermore National Laboratory.
+ * Copyright (c) 2020, Florida State University. Contributions from
+ * the Computer Architecture and Systems Research Laboratory (CASTL)
+ * at the Department of Computer Science.
+ *
+ * LLNL-CODE-816239. All rights reserved.
+ *
+ * This is the license for Wemul.
+ * For details, see https://github.com/LLNL/Wemul
+ * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
+ */
+
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -7,7 +21,10 @@
 #include "dag_parser.hpp"
 #include "dag_workload.hpp"
 #include "ior_runner.hpp"
+#include "profiler.hpp"
 #include "utils.hpp"
+
+extern profiler g_profiler;
 
 dag_workload::dag_workload(bool use_ior,
     std::string directory,
@@ -353,6 +370,8 @@ void dag_workload::initialize_MPI(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
 
+    g_profiler.m_timer.adjust_time_deviation();
+
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
@@ -372,6 +391,10 @@ void dag_workload::initialize_MPI(int argc, char** argv)
 
 void dag_workload::finalize_MPI()
 {
+    if (g_profiler.m_enabled)
+    {
+        g_profiler.write_to_file();
+    }
     // delete[] m_rank_reading;
     MPI_Group_free(&m_world_group);
     MPI_Finalize();

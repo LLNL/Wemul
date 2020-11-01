@@ -1,12 +1,31 @@
+/*
+ * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Produced at the Lawrence Livermore National Laboratory.
+ * Copyright (c) 2020, Florida State University. Contributions from
+ * the Computer Architecture and Systems Research Laboratory (CASTL)
+ * at the Department of Computer Science.
+ *
+ * LLNL-CODE-816239. All rights reserved.
+ *
+ * This is the license for Wemul.
+ * For details, see https://github.com/LLNL/Wemul
+ * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
+ */
+
 #include <dirent.h>
 #include <fstream>
 #include <iostream>
 #include <mpi.h>
 #include <stdlib.h>
 
+#include "profiler.hpp"
 #include "utils.hpp"
 
-void utils::recursive_listfiles(const std::string& directory, std::vector<std::string>& filepath_list,const bool show_hidden_entries)
+extern profiler g_profiler;
+
+void utils::recursive_listfiles(const std::string& directory,
+    std::vector<std::string>& filepath_list,
+    const bool show_hidden_entries)
 {
     DIR *input_direntry;
     struct dirent *output_direntry;
@@ -45,6 +64,11 @@ void utils::recursive_listfiles(const std::string& directory, std::vector<std::s
 
 void utils::read_file(std::string filepath)
 {
+    double _start_time, _end_time;
+    if (g_profiler.m_enabled)
+    {
+        _start_time = g_profiler.m_timer.get_current_time();
+    }
     // std::cout << "Call read_file" << std::endl;
     MPI_File file_handle;
 
@@ -59,6 +83,7 @@ void utils::read_file(std::string filepath)
         //std::cout << "File size: " << filesize << std::endl;
         MPI_Status status;
         MPI_File_read(file_handle, buf, filesize, MPI_BYTE, &status);
+        if (g_profiler.m_enabled) g_profiler.m_total_bytes_read += filesize;
         //std::cout << buf << std::endl;
         //int count;
         //MPI_Get_count(&status, MPI_BYTE, &count);
@@ -70,10 +95,21 @@ void utils::read_file(std::string filepath)
     {
         std::cout << filepath << " : does not exist!" << std::endl;
     }
+    if (g_profiler.m_enabled)
+    {
+        _end_time = g_profiler.m_timer.get_current_time();
+        g_profiler.m_read_intervals.push_back(std::make_pair(_start_time, _end_time));
+    }
 }
 
 void utils::write_file(std::string filepath, int block_size, int segment_count, bool fsync)
 {
+    double _start_time, _end_time;
+    if (g_profiler.m_enabled)
+    {
+        _start_time = g_profiler.m_timer.get_current_time();
+    }
+
     MPI_File file_handle;
 
     MPI_File_open(MPI_COMM_SELF, filepath.c_str(),
@@ -93,6 +129,7 @@ void utils::write_file(std::string filepath, int block_size, int segment_count, 
     {
         MPI_Status status;
         MPI_File_write_at(file_handle, offset, write_buf, block_size, MPI_BYTE, &status);
+        if (g_profiler.m_enabled) g_profiler.m_total_bytes_written += block_size;
         // std::cout << write_buf << std::endl;
         int count;
         MPI_Get_count(&status, MPI_BYTE, &count);
@@ -107,12 +144,23 @@ void utils::write_file(std::string filepath, int block_size, int segment_count, 
         if (MPI_File_sync(file_handle) != MPI_SUCCESS)
             std::cout << "ERROR: fsync failed!" << std::endl;
 
-
     MPI_File_close(&file_handle);
+
+    if (g_profiler.m_enabled)
+    {
+        _end_time = g_profiler.m_timer.get_current_time();
+        g_profiler.m_write_intervals.push_back(std::make_pair(_start_time, _end_time));
+    }
 }
 
 void utils::read_file(std::string filepath, int block_size, int segment_count)
 {
+    double _start_time, _end_time;
+    if (g_profiler.m_enabled)
+    {
+        _start_time = g_profiler.m_timer.get_current_time();
+    }
+
     MPI_File file_handle;
 
     MPI_File_open(MPI_COMM_SELF, filepath.c_str(),
@@ -125,6 +173,7 @@ void utils::read_file(std::string filepath, int block_size, int segment_count)
     {
         MPI_Status status;
         MPI_File_read_at(file_handle, offset, read_buf, block_size, MPI_BYTE, &status);
+        if (g_profiler.m_enabled) g_profiler.m_total_bytes_read += block_size;
         // std::cout << read_buf << std::endl;
         int count;
         MPI_Get_count(&status, MPI_BYTE, &count);
@@ -136,10 +185,21 @@ void utils::read_file(std::string filepath, int block_size, int segment_count)
     }
     free(read_buf);
     MPI_File_close(&file_handle);
+
+    if (g_profiler.m_enabled)
+    {
+        _end_time = g_profiler.m_timer.get_current_time();
+        g_profiler.m_read_intervals.push_back(std::make_pair(_start_time, _end_time));
+    }
 }
 
 bool utils::file_ready(std::string filepath, int block_size, int segment_count)
 {
+    double _start_time, _end_time;
+    if (g_profiler.m_enabled)
+    {
+        _start_time = g_profiler.m_timer.get_current_time();
+    }
     long _expected_filesize = (long) block_size * segment_count;
     while(true)
     {
@@ -151,13 +211,23 @@ bool utils::file_ready(std::string filepath, int block_size, int segment_count)
             break;
         }
     }
-
+    if (g_profiler.m_enabled)
+    {
+        _end_time = g_profiler.m_timer.get_current_time();
+        g_profiler.m_wait_intervals.push_back(std::make_pair(_start_time, _end_time));
+    }
     return true;
 }
 
 void utils::read_or_write(std::string filepath, int block_size, int segment_count, bool write,
     bool read_check, bool fsync)
 {
+    double _start_time, _end_time;
+    if (g_profiler.m_enabled)
+    {
+        _start_time = g_profiler.m_timer.get_current_time();
+    }
+
     MPI_File file_handle;
     // std::cout << "File Path: " << filepath << std::endl;
 
@@ -180,6 +250,11 @@ void utils::read_or_write(std::string filepath, int block_size, int segment_coun
                 MPI_File_write_ordered(file_handle, buf, block_size, MPI_BYTE, MPI_STATUS_IGNORE);
             else
                 MPI_File_read_ordered(file_handle, buf, block_size, MPI_BYTE, MPI_STATUS_IGNORE);
+            if (g_profiler.m_enabled)
+            {
+                if (write) g_profiler.m_total_bytes_written += block_size;
+                else g_profiler.m_total_bytes_read += block_size;
+            }
             free(buf);
             buf += block_size;
             buf = (write) ? (char*) calloc(block_size, sizeof(char))
@@ -195,5 +270,12 @@ void utils::read_or_write(std::string filepath, int block_size, int segment_coun
     else
     {
         std::cout << filepath << " : does not exist yet, might be a non-strict file" << std::endl;
+    }
+
+    if (g_profiler.m_enabled)
+    {
+        _end_time = g_profiler.m_timer.get_current_time();
+        if (write) g_profiler.m_write_intervals.push_back(std::make_pair(_start_time, _end_time));
+        else g_profiler.m_read_intervals.push_back(std::make_pair(_start_time, _end_time));
     }
 }

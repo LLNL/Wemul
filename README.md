@@ -1,69 +1,77 @@
-# Workflow I/O Emulation Framework
-## Overview
-Scientific application workflows leverage the capabilities of cutting-edge
-high-performance computing (HPC) facilities to enable complex applications for
-academia, research, and industry communities. Data transfer and I/O dependency
-among different modules of modern HPC workflows can increase the complexity
-and hamper the overall performance of workflows.
-Understanding this complexity due to data-dependency and dataflow
-is a very important prerequisite for developing optimization strategies to
-improve I/O performance and, eventually, the entire workflow.
-As existing I/O benchmarking tools are lacking in identifying
-and representing the dataflow in modern HPC workflows,
-we have implemented a workflow I/O emulation framework to mimic different types
-of I/O behavior demonstrated by common and complex HPC application workflows
-for deeper analysis.
+# Wemul: Workflow I/O Emulation Framework (Wemul) v0.1
 
-## Software Architecture
-<p>
-    <img src="docs/images/emulator.png" alt>
-</p>
-<p>
-    <em>Fig. 1: Class diagram of workflow I/O emulation framework</em>
-</p>
+The Workflow I/O Emulation Framework (Wemul) provides an MPI-enabled
+C++ interface for emulating HPC workflow I/O workloads with the features
+for specifying data-dependencies among workflow applications and tasks.
 
-The workflow I/O emulation framework is an MPI-enabled C++ application.
-It has five modes, i.e., DL training, producer-consumer I/O, checkpoint/restart,
-app-based, and dag-based I/O workloads.
-As shown in Fig. 1, *emulator* is the entry point
-that exposes the functionalities of the framework to the users.
-The parameter values are recorded in the *config_attributes* module.
-The *dataflow_emulator*, derived from generic *workflow_emulator*,
-is the factory for creating different types of I/O workloads
-according to the user-defined configuration.
-Besides, *app_workload*, *dag_workload*, *deep_learning*, etc., implement
-the base *dataflow_workload* class.
-Interleaved-Or-Random (IOR), is used as a static library
-to provide flexibility in finer granularity. For now, it can be optionally
-utilized from *deep_learning* module through *ior_runner* class,
-but is extensible to be used more robustly in the future.
-Asynchronous Transfer Library (AXL) is also imported
-as a library from *checkpoint_restart* module for staging the data files
-in and out according to user parameters.
+For details on its usage, see [docs/README.md](https://github.com/LLNL/Wemul/docs/blob/main/README.md).
 
-## Functionality and Usage
-<p>
-    <img src="docs/images/emulator_api.png" alt>
-</p>
-<p>
-    <em>Table 1: User parameters of workflow I/O emulation framework</em>
-</p>
+## Quickstart
+### Dependencies
+- C++11
+- MPI
+- [IOR](https://github.com/LLNL/ior)
+- [KVTree](https://github.com/LLNL/KVTree)
+- [AXL](https://github.com/ECP-VeloC/AXL)
+### How to build
+#### Build IOR
+Build IOR by following the instructions mentioned [here](https://github.com/LLNL/ior/blob/master/README).
+Run the following in the terminal
+```shell
+export IOR_PATH=/path/to/IOR/executable/including/the/executable/file/name
+```
+#### Build KVTree
+Build KVTree by following the instructions mentioned [here](https://github.com/ECP-VeloC/KVTree/blob/master/README.md).
+Run the following in the terminal
+```shell
+export KVTREE_DIR=/path/to/KVTree/installation/dir
+```
+#### Build AXL
+Build AXL by following the instructions mentioned [here](https://github.com/ECP-VeloC/AXL/blob/master/README.md).
+Run the following in the terminal
+```shell
+export AXL_DIR=/path/to/AXL/installation/dir
+```
+#### Build Wemul
+Run the following commands in the terminal to build Wemul from source
+```shell
+git clone https://github.com/LLNL/Wemul.git
+cd codes
+make
+```
+An executable ```emulator``` will be generated in the codes/build directory
+### How to run
+We recommend running Wemul with srun/jsrun/mpirun (lrun if on an LLNL system).
+An example run command with ```srun``` is as follows
+```shell
+srun -N 2 -n 16 /path/to/emulator/executable --type data --subtype app  --read_input_dirs /path/to/gpfs:/path/to/bb --read_filenames D1:D2 --read_block_size 1048576 --read_segment_count 32768 --write_input_dirs /path/to/tmpfs:/path/to/bb --write_filenames D3:D4 --write_block_size 1048576 --write_segment_count 32768 --file_per_process_write
+```
+List of all parameters can be found [here](https://github.com/LLNL/Wemul/docs/blob/main/README.md#functionality-and-usage).
 
-The I/O emulation framework takes the information about a workload execution
-from the user via command-line parameters.
-The parameters are categorized into six basic classes. Firstly, the "General" category has the
-parameters related to starting information for the framework, i.e., *type* of emulation
-(we keep this parameter for future extension), *subtype* to specify an execution mode,
-and *input directory* to use for emulation.
-Besides, there are some generic I/O pattern related parameters like *block size* and
-*segment count* of the I/O requests in a workload.
-The rest of the categories are execution mode-specific. For instance, "Application-based"
-category has parameters to set the file list for reading and writing by the emulation framework
-and access patterns. "DAG-based" category has only one parameter that takes the path to the file
-with DAG specification of the entire workflow.
-Some mentionable parameters for "DL training", "Producer-consumer", and "Checkpoint/restart"
-are the number of epochs, inter-node enabler, and the number of checkpointing ranks, respectively.
-The parameters and their usage are shown in more detail in Table 1.
+## Authors
+Created by
+- Fahim Tahmid Chowdhury    (fchowdhu@cs.fsu.edu) -> Email here for any questions and suggestions
+- Yue Zhu                   (yzhu@cs.fsu.edu)
+- Francesco Di Natale       (dinatale3@llnl.gov)
+- Adam Moody                (moody20@llnl.gov)
+- Elsa Gonsiorowski         (gonsiorowski1@llnl.gov)
+- Kathryn Mohror            (mohror1@llnl.gov)
+- Weikuan Yu                (wyu3@fsu.edu)
 
-## How to Build
-## How to Run
+To reference Wemul in a publication, please cite the following paper:
+
+* F. Chowdhury, Y. Zhu, F. Di Natale, A. Moody, E. Gonsiorowski, K. Mohror, and W. Yu, "Emulating I/O Behavior in Scientific Workflows on High Performance Computing Systems," 5th International Parallel Data Systems Workshop. November 2020, Virtual Workshop.
+
+## Release
+Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+Produced at the Lawrence Livermore National Laboratory.
+Copyright (c) 2020, Florida State University. Contributions from
+the Computer Architecture and Systems Research Laboratory (CASTL)
+at the Department of Computer Science.
+<br/>
+`LLNL-CODE-816239`. All rights reserved.
+
+Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
+
+
+For release details and restrictions, please read the [LICENSE](https://github.com/LLNL/Wemul/blob/main/LICENSE) and [NOTICE](https://github.com/LLNL/Wemul/blob/main/NOTICE) files.

@@ -12,21 +12,22 @@
  * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
  */
 
-#ifndef __IOR_RUNNER_HPP__
-#define __IOR_RUNNER_HPP__
+#ifndef __TIMER_HPP__
+#define __TIMER_HPP__
 
-#include <string>
-#include <vector>
+#include <mpi.h>
 
-class ior_runner
+class timer
 {
 public:
-    ior_runner(std::vector<std::string> params);
-    ~ior_runner();
-    int run();
+    timer();
+    ~timer();
+    double get_current_time();
+    void adjust_time_deviation();
+
 private:
-    char** convert_params_to_argv();
-    std::vector<std::string> m_params;
+    double m_delta;
+    double m_deviation;
 };
 
-#endif // __IOR_RUNNER_HPP__
+#endif // __TIMER_HPP__

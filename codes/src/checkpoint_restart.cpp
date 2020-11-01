@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Produced at the Lawrence Livermore National Laboratory.
+ * Copyright (c) 2020, Florida State University. Contributions from
+ * the Computer Architecture and Systems Research Laboratory (CASTL)
+ * at the Department of Computer Science.
+ *
+ * LLNL-CODE-816239. All rights reserved.
+ *
+ * This is the license for Wemul.
+ * For details, see https://github.com/LLNL/Wemul
+ * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
+ */
+
 #include <chrono>
 #include <fstream>
 // #include <iostream>
@@ -16,7 +30,10 @@
 
 #include "axl.h"
 #include "checkpoint_restart.hpp"
+#include "profiler.hpp"
 #include "utils.hpp"
+
+extern profiler g_profiler;
 
 checkpoint_restart::checkpoint_restart(std::string directory,
         std::string staging_directory,
@@ -92,6 +109,7 @@ void checkpoint_restart::emulate(int argc, char** argv)
     // std::cout << "Rank: " << m_world_rank << ":" <<  "Emulating Checkpoint Restart I/O Pattern\n";
 
     MPI_Init(&argc, &argv);
+    g_profiler.m_timer.adjust_time_deviation();
 
     int _world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &_world_size);
@@ -298,6 +316,10 @@ void checkpoint_restart::emulate(int argc, char** argv)
         }
     }
 
+    if (g_profiler.m_enabled)
+    {
+        g_profiler.write_to_file();
+    }
     MPI_Finalize();
 }
 

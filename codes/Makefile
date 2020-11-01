@@ -15,14 +15,16 @@ OUTPUT=$(OUTPUT_DIR)/emulator
 # IOR_LIB_DIR=/g/g91/chowdhur/codes/ior_original/install/lib
 
 # KVTree related information
+# KVTREE_DIR=/g/g91/chowdhur/codes/KVTree/install
 KVTREE_LIB=kvtree
-KVTREE_LIB_DIR=/g/g91/chowdhur/codes/KVTree/install/lib64
-KVTREE_INCLUDE_DIR=/g/g91/chowdhur/codes/KVTree/install/include
+KVTREE_LIB_DIR=${KVTREE_DIR}/lib64
+KVTREE_INCLUDE_DIR=${KVTREE_DIR}/include
 
 # AXL related information
+# AXL_DIR=/g/g91/chowdhur/codes/AXL/install
 AXL_LIB=axl
-AXL_LIB_DIR=/g/g91/chowdhur/codes/AXL/install/lib64
-AXL_INCLUDE_DIR=/g/g91/chowdhur/codes/AXL/install/include
+AXL_LIB_DIR=${AXL_DIR}/lib64
+AXL_INCLUDE_DIR=${AXL_DIR}/include
 
 CXX=g++
 MPICXX=mpic++
