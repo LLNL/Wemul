@@ -114,7 +114,7 @@ void deep_learning::set_directory(std::string directory)
 
 void deep_learning::populate_list_of_all_filepaths()
 {
-    utils::recursive_listfiles(m_directory, m_filepath_list)
+    utils::recursive_listfiles(m_directory, m_filepath_list);
     // // Save time in the experiments by hard-coded directory structure
     // // Hint: In ImageNet package there is a file that has all information
     // // about the directory structure; no need to recursively traverse

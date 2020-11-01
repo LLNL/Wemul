@@ -29,7 +29,7 @@ min_nodes=1
 max_nodes=16
 tasks_per_node=8
 input_dir=/p/gpfs1/chowdhur/io_playground
-emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
 
 num_nodes=$min_nodes
 export LD_LIBRARY_PATH=/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH

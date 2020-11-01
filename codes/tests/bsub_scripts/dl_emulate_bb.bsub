@@ -9,7 +9,7 @@ max_nodes=16
 tasks_per_node=4
 dataset_dir=/p/gpfs1/chowdhur/dummy_dataset
 num_epochs=5
-emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
 lrun -N16 -T1 cp -r $dataset_dir $BBPATH
 sleep 2m
 lrun -N16 -T1 echo $BBPATH

@@ -17,7 +17,7 @@ study:
           cmd: |
               num_nodes=16
               tasks_per_node=4
-              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
               input_dir=$BBPATH
               inter_node=
               producer_only=--producer_only
@@ -30,7 +30,7 @@ study:
           cmd: |
               num_nodes=16
               tasks_per_node=4
-              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
               input_dir=$BBPATH
               inter_node=
               consumer_only=--consumer_only

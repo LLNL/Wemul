@@ -12,10 +12,10 @@ min_iteration=1
 max_iteration=5
 dataset_dir=/p/gpfs1/chowdhur/large_dummy_dataset
 num_epochs=3
-emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator
+emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
 export LD_LIBRARY_PATH=/opt/ibm/bb/lib:/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
 
-#lrun -N2 -T4 --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/emulator --type data --subtype dl --input_dir /p/gpfs1/chowdhur/dummy_dataset
+#lrun -N2 -T4 --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul --type data --subtype dl --input_dir /p/gpfs1/chowdhur/dummy_dataset
 
 num_nodes=$min_nodes
 while [ $num_nodes -le $max_nodes ]

@@ -6,7 +6,7 @@ SOURCES=$(SOURCE_DIR)/*.cpp $(TEST_DIR)/*.cpp
 INCLUDE_DIR=include
 INCLUDES=$(INCLUDE_DIR)/*.hpp
 OUTPUT_DIR=build
-OUTPUT=$(OUTPUT_DIR)/emulator
+OUTPUT=$(OUTPUT_DIR)/wemul
 
 # # IOR related information
 # IOR_LIB=aiori
