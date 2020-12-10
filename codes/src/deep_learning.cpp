@@ -28,10 +28,12 @@
 
 extern profiler g_profiler;
 
-deep_learning::deep_learning(std::string directory, bool use_ior,
+deep_learning::deep_learning(std::shared_ptr<base_io_api> io_api,
+        std::string directory, bool use_ior,
         int num_epochs, int comp_time_per_epoch)
     : dataflow_workload()
 {
+    m_io_api = io_api;
     m_directory = directory;
     m_use_ior = use_ior;
     m_num_epochs = num_epochs;
@@ -93,7 +95,7 @@ void deep_learning::emulate(int argc, char** argv)
             std::cout << num_files_per_proc << std::endl;
             for (int i = start_id; i <= end_id; i++)
             {
-                utils::read_file(m_filepath_list[m_file_ids[i]]);
+                m_io_api->read_file(m_filepath_list[m_file_ids[i]]);
             }
             // emulate some computation; later make it configurable
             std::this_thread::sleep_for(std::chrono::milliseconds((long) (m_comp_time_per_epoch * 1000)));

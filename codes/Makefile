@@ -2,7 +2,7 @@ MKDIR_P=mkdir -p
 
 SOURCE_DIR=src
 TEST_DIR=tests
-SOURCES=$(SOURCE_DIR)/*.cpp $(TEST_DIR)/*.cpp
+SOURCES=$(SOURCE_DIR)/*.cpp
 INCLUDE_DIR=include
 INCLUDES=$(INCLUDE_DIR)/*.hpp
 OUTPUT_DIR=build
@@ -29,11 +29,13 @@ AXL_INCLUDE_DIR=${AXL_DIR}/include
 CXX=g++
 MPICXX=mpic++
 CXXFLAGS=-Wall -ansi -pedantic -std=c++11
+# TODO: take as parameter, e.g., make flux, and assign conditionally
+# FLUX_FLAGS=-Wl,-rpath=/usr/global/tools/flux/blueos_3_ppc64le_ib/spectrum-mpi-2019.06.24/lib
 
 all: $(OUTPUT)
 
 $(OUTPUT): $(SOURCES)
 	$(MKDIR_P) $(OUTPUT_DIR)
-	$(MPICXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -I$(AXL_INCLUDE_DIR) -L$(AXL_LIB_DIR) -L$(KVTREE_LIB_DIR) $(SOURCES) -o$(OUTPUT) -l$(AXL_LIB) -l$(KVTREE_LIB)
+	$(MPICXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -I$(AXL_INCLUDE_DIR) -L$(AXL_LIB_DIR) -L$(KVTREE_LIB_DIR) $(SOURCES) -o$(OUTPUT) -l$(AXL_LIB) -l$(KVTREE_LIB) $(FLUX_FLAGS)
 clean:
 	rm -rf $(OUTPUT_DIR)

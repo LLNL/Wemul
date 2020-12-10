@@ -22,6 +22,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "base_io_api.hpp"
 #include "dataflow_workload.hpp"
 #include "types.hpp"
 
@@ -31,7 +32,9 @@ class dag_parser;
 class dag_workload : public dataflow_workload
 {
 public:
-    dag_workload(bool use_ior,
+    dag_workload(
+        std::shared_ptr<base_io_api> io_api,
+        bool use_ior,
         std::string directory,
         std::string filename,
         dag_workload_types dag_workload_type,
@@ -44,6 +47,7 @@ public:
     virtual void emulate(int argc, char** argv) override;
 
 private:
+    std::shared_ptr<base_io_api> m_io_api;
     // For IOR enabled dags
     bool m_use_ior;
     std::string m_directory;
@@ -72,8 +76,6 @@ private:
     void print_dag();
     void initialize_MPI(int argc, char** argv);
     void finalize_MPI();
-    void read_or_write(int world_rank, int comm_rank, int block_size, int segment_count,
-        std::string directory, std::string filename, bool write = false);
 };
 
 #endif // __DAG_WORKLOAD_HPP__

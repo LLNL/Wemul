@@ -15,16 +15,20 @@
 #ifndef __CHECKPOINT_RESTART_HPP__
 #define __CHECKPOINT_RESTART_HPP__
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "base_io_api.hpp"
 #include "dataflow_workload.hpp"
 #include "types.hpp"
 
 class checkpoint_restart : public dataflow_workload
 {
 public:
-    checkpoint_restart(std::string directory,
+    checkpoint_restart(
+        std::shared_ptr<base_io_api> io_api,
+        std::string directory,
         std::string staging_directory = ".",
         int num_checkpointing_ranks = 1,
         int num_ck_files_per_rank = 1,
@@ -42,6 +46,7 @@ public:
     virtual void emulate(int argc, char** argv) override;
 
 private:
+    std::shared_ptr<base_io_api> m_io_api;
     std::string m_directory;
     std::string m_staging_directory;
     int m_num_checkpointing_ranks;

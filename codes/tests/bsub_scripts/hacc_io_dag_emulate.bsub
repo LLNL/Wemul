@@ -2,13 +2,15 @@
 
 #BSUB -G asccasc
 #BSUB -q pbatch
-#BSUB -nnodes 16
+#BSUB -nnodes 4
 #BSUB -W 60
 
-min_nodes=16
-max_nodes=16
+min_nodes=4
+max_nodes=4
+max_iteration=5
 tasks_per_node=8
 input_dir=/p/gpfs1/chowdhur/io_playground
+data_dir=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/dfman/codes/workflows/task_based/processed
 wemul_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
 source /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/utils/prepare_lassen_build.sh
 
@@ -16,26 +18,22 @@ export LD_LIBRARY_PATH=/opt/ibm/bb/lib:/g/g91/chowdhur/codes/AXL/install/lib64:/
 
 num_nodes=$min_nodes
 
-inter_node=--inter_node
-block_size=268435456
-segment_count=128
-
-min_iteration=1
-max_iteration=2
-
 while [ $num_nodes -le $max_nodes ]
 do
     printf "\nNum Clients: "
     echo $num_nodes
     printf "\n"
-    iteration=$min_iteration
+    total_task=$((num_nodes*tasks_per_node))
+    dag_filename=$data_dir/hacc_dag_4_nodes_32_procs
+    iteration=1
     while [ $iteration -le $max_iteration ]
     do
         printf "\nIteration: "
         echo $iteration
         printf "\n"
-        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node --block_size $block_size --segment_count $segment_count $inter_node
-        #lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/librecorder/lib/librecorder.so" $wemul_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node $inter_node
+        block_size=2048
+        segment_count=$((13504/total_task))
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype dag --dag_file $dag_filename --io_api posixio --input_dir $input_dir --block_size $block_size --segment_count $segment_count
         rm -rf $input_dir/*
         iteration=$((iteration+1))
     done

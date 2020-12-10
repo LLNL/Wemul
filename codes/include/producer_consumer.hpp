@@ -15,14 +15,17 @@
 #ifndef __PRODUCER_CONSUMER_HPP__
 #define __PRODUCER_CONSUMER_HPP__
 
+#include <memory>
 #include <mpi.h>
 
+#include "base_io_api.hpp"
 #include "dataflow_workload.hpp"
 
 class producer_consumer : public dataflow_workload
 {
 public:
-    producer_consumer(std::string directory, bool inter_node,
+    producer_consumer(std::shared_ptr<base_io_api> io_api,
+        std::string directory, bool inter_node,
         int num_ranks_per_node, bool producer_only = false,
         bool consumer_only = false, int block_size = 1000000,
         int segment_count = 1000000);
@@ -40,6 +43,8 @@ private:
     MPI_Comm m_producer_comm;
     MPI_Comm m_consumer_comm;
     // MPI_Comm m_both_comm;
+
+    std::shared_ptr<base_io_api> m_io_api;
     std::string m_directory;
     bool m_inter_node;
     int m_num_ranks_per_node;

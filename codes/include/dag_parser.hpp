@@ -22,6 +22,13 @@
 #include <unordered_set>
 #include <vector>
 
+enum colors
+{
+    black,
+    gray,
+    white
+};
+
 class dag_parser
 {
 public:
@@ -38,8 +45,10 @@ private:
     void update_relations(std::string line);
 
     // extracting dag
-    bool has_cycle(std::string start_vertex);
-    bool find_cycle(std::string current_vertex);
+    void remove_backedges();
+    bool remove_backedge(std::string start_vertex);
+    bool remove_non_strict_edge_from_cycle(std::string start_vertex_id,
+        std::string end_vertex_id);
 
     std::string m_filepath;
 
@@ -71,9 +80,8 @@ private:
     // maintaining dataflow graph
     std::unordered_map<std::string, std::vector<std::string>> m_dataflow_graph;
     std::unordered_map<std::string, std::vector<std::string>> m_dataflow_dag;
-    std::unordered_set<std::string> m_white_vertices;
-    std::unordered_set<std::string> m_gray_vertices;
-    std::unordered_set<std::string> m_black_vertices;
+    std::unordered_map<std::string, colors> m_colors;
+    std::unordered_map<std::string, std::string> m_parents;
     std::unordered_set<std::string> m_starting_vertices;
     std::unordered_set<std::string> m_ending_vertices;
 

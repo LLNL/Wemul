@@ -54,7 +54,7 @@ from the user via command-line parameters.
 The parameters are categorized into six basic classes. Firstly, the "General" category has the
 parameters related to starting information for the framework, i.e., *type* of emulation
 (we keep this parameter for future extension), *subtype* to specify an execution mode,
-and *input directory* to use for emulation.
+and *I/O API*, e.g., mpiio, posixio, etc.
 Besides, there are some generic I/O pattern related parameters like *block size* and
 *segment count* of the I/O requests in a workload.
 The rest of the categories are execution mode-specific. For instance, "Application-based"

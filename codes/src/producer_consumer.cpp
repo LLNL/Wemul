@@ -21,10 +21,12 @@
 
 extern profiler g_profiler;
 
-producer_consumer::producer_consumer(std::string directory, bool inter_node,
+producer_consumer::producer_consumer(std::shared_ptr<base_io_api> io_api,
+    std::string directory, bool inter_node,
     int num_ranks_per_node, bool producer_only, bool consumer_only,
     int block_size, int segment_count) : dataflow_workload()
 {
+    m_io_api = io_api;
     m_directory = directory;
     m_inter_node = inter_node;
     m_num_ranks_per_node = num_ranks_per_node;
@@ -51,7 +53,7 @@ void producer_consumer::emulate(int argc, char** argv)
         {
             MPI_Comm_rank(m_producer_comm, &rank);
             std::string _file_path = m_directory + "/file." + std::to_string(rank);
-            utils::read_or_write(_file_path, m_block_size, m_segment_count, true);
+            m_io_api->read_or_write(_file_path, m_block_size, m_segment_count, true);
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
@@ -60,7 +62,7 @@ void producer_consumer::emulate(int argc, char** argv)
         {
             MPI_Comm_rank(m_consumer_comm, &rank);
             std::string _file_path = m_directory + "/file." + std::to_string(rank);
-            utils::read_or_write(_file_path, m_block_size, m_segment_count);
+            m_io_api->read_or_write(_file_path, m_block_size, m_segment_count);
         }
     }
     else if (m_producer_only)
@@ -69,7 +71,7 @@ void producer_consumer::emulate(int argc, char** argv)
         {
             MPI_Comm_rank(m_producer_comm, &rank);
             std::string _file_path = m_directory + "/file." + std::to_string(rank);
-            utils::read_or_write(_file_path, m_block_size, m_segment_count, true);
+            m_io_api->read_or_write(_file_path, m_block_size, m_segment_count, true);
         }
     }
     else if (m_consumer_only)
@@ -78,7 +80,7 @@ void producer_consumer::emulate(int argc, char** argv)
         {
             MPI_Comm_rank(m_consumer_comm, &rank);
             std::string _file_path = m_directory + "/file." + std::to_string(rank);
-            utils::read_or_write(_file_path, m_block_size, m_segment_count);
+            m_io_api->read_or_write(_file_path, m_block_size, m_segment_count);
         }
     }
     finalize_MPI();

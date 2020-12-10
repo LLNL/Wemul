@@ -18,11 +18,12 @@
 
 #include "app_workload.hpp"
 #include "profiler.hpp"
-#include "utils.hpp"
 
 extern profiler g_profiler;
 
-app_workload::app_workload(std::string directory,
+app_workload::app_workload(
+        std::shared_ptr<base_io_api> io_api,
+        std::string directory,
         int block_size,
         int segment_count,
         std::string read_input_dirs,
@@ -36,6 +37,7 @@ app_workload::app_workload(std::string directory,
         file_access_types read_access_type,
         file_access_types write_access_type)
 {
+    m_io_api = io_api;
     m_directory = directory;
     m_read_input_dirs = read_input_dirs;
     m_write_input_dirs = write_input_dirs;
@@ -73,7 +75,7 @@ void app_workload::emulate(int argc, char** argv)
                 (m_read_input_dir_list.size() > input_dir_id)
                 ? m_read_input_dir_list[input_dir_id] : m_directory;
             std::string _file_path = _directory + "/" + _filename;
-            utils::read_or_write(_file_path, _block_size, _segment_count);
+            m_io_api->read_or_write(_file_path, _block_size, _segment_count);
             input_dir_id++;
         }
     }
@@ -88,7 +90,7 @@ void app_workload::emulate(int argc, char** argv)
                     (m_read_input_dir_list.size() > _fileid)
                     ? m_read_input_dir_list[_fileid] : m_directory;
                 std::string _file_path = _directory + "/" + m_read_filename_list[rank%m_world_size];
-                utils::read_or_write(_file_path, _block_size, _segment_count);
+                m_io_api->read_or_write(_file_path, _block_size, _segment_count);
             }
         }
     }
@@ -111,7 +113,7 @@ void app_workload::emulate(int argc, char** argv)
                 ? m_write_input_dir_list[input_dir_id] : m_directory;
             // std::cout << "done updating directory: " << _directory << std::endl;
             std::string _file_path = _directory + "/" + _filename;
-            utils::read_or_write(_file_path, _block_size, _segment_count, true);
+            m_io_api->read_or_write(_file_path, _block_size, _segment_count, true);
             input_dir_id++;
         }
     }
@@ -126,7 +128,7 @@ void app_workload::emulate(int argc, char** argv)
                     (m_write_input_dir_list.size() > _fileid)
                     ? m_write_input_dir_list[_fileid] : m_directory;
                 std::string _file_path = _directory + "/" + m_write_filename_list[rank%m_world_size];
-                utils::read_or_write(_file_path, _block_size, _segment_count, true);
+                m_io_api->read_or_write(_file_path, _block_size, _segment_count, true);
             }
         }
     }

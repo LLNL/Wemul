@@ -15,10 +15,12 @@
 #ifndef __DATAFLOW_EMULATOR_HPP__
 #define __DATAFLOW_EMULATOR_HPP__
 
+#include <memory>
 #include <string>
 #include "types.hpp"
 #include "workflow_emulator.hpp"
 #include "config_attributes.hpp"
+#include "base_io_api.hpp"
 
 class dataflow_workload;
 
@@ -31,11 +33,13 @@ public:
     virtual void run(int argc, char** argv) override;
 
 protected:
+    virtual std::shared_ptr<base_io_api> create_io_api(io_api_types io_api_type);
     virtual dataflow_workload* create_dataflow_workload(dataflow_workload_types dataflow_workload_type);
 
 private:
     config_attributes* m_config_attributes;
     dataflow_workload* m_dataflow_workload;
+    std::shared_ptr<base_io_api> m_io_api;
 };
 
 #endif // __DATAFLOW_EMULATOR_HPP__

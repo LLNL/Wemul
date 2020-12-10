@@ -24,6 +24,7 @@ class config_attributes
 public:
     config_attributes(
         dataflow_workload_types dataflow_workload_type = dataflow_workload_types::dataflow_workload_types_start,
+        io_api_types io_api_type = io_api_types::e_mpiio,
         std::string directory = ".",
         std::string filename = "testFile",
         std::string staging_directory = ".",
@@ -59,11 +60,13 @@ public:
         int write_block_size = -1,
         int write_segment_count = -1,
         file_access_types read_access_type = file_access_types::e_shared_file,
-        file_access_types write_access_type = file_access_types::e_shared_file);
+        file_access_types write_access_type = file_access_types::e_shared_file,
+        mpiio_types mpiio_type = mpiio_types::e_collective);
 
     void print();
 
     dataflow_workload_types m_dataflow_workload_type;
+    io_api_types m_io_api_type;
     std::string m_directory;
     std::string m_filename;
     std::string m_staging_directory;
@@ -101,6 +104,7 @@ public:
     int m_write_segment_count;
     file_access_types m_read_access_type;
     file_access_types m_write_access_type;
+    mpiio_types m_mpiio_type;
 };
 
 #endif // __CONFIG_ATTRIBUTES_HPP__

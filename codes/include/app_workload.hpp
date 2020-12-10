@@ -15,10 +15,12 @@
 #ifndef __APP_WORKLOAD_HPP__
 #define __APP_WORKLOAD_HPP__
 
+#include <memory>
 #include <mpi.h>
 #include <string>
 #include <vector>
 
+#include "base_io_api.hpp"
 #include "dataflow_workload.hpp"
 #include "types.hpp"
 
@@ -26,7 +28,9 @@
 class app_workload : public dataflow_workload
 {
 public:
-    app_workload(std::string directory,
+    app_workload(
+        std::shared_ptr<base_io_api> io_api,
+        std::string directory,
         int block_size,
         int segment_count,
         std::string read_input_dirs,
@@ -44,6 +48,7 @@ public:
     virtual void emulate(int argc, char** argv) override;
 
 private:
+    std::shared_ptr<base_io_api> m_io_api;
     // TODO: make it directory list for heterogeneous storage
     //       or take list of absolute file paths and extract directory
     //       now all the files are read/written in the same mount point

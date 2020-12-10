@@ -12,7 +12,8 @@ min_iteration=1
 max_iteration=5
 dataset_dir=/p/gpfs1/chowdhur/large_dummy_dataset
 num_epochs=3
-emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+wemul_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+source /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/utils/prepare_lassen_build.sh
 export LD_LIBRARY_PATH=/opt/ibm/bb/lib:/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
 
 #lrun -N2 -T4 --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul --type data --subtype dl --input_dir /p/gpfs1/chowdhur/dummy_dataset
@@ -29,7 +30,7 @@ do
         printf "\nIteration: "
         echo $iteration
         echo "\n"
-        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype dl --input_dir $dataset_dir --num_epochs $num_epochs
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype dl --input_dir $dataset_dir --num_epochs $num_epochs
         iteration=$((iteration+1))
     done
     num_nodes=$((num_nodes*2))

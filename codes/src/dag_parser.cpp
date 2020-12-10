@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <stack>
 #include <sstream>
 
 #include "dag_parser.hpp"
@@ -59,11 +60,26 @@ void dag_parser::parse_file()
 
 void dag_parser::extract_dag()
 {
-    for (auto _edge : m_non_strict_edges)
+    remove_backedges();
+}
+
+void dag_parser::remove_backedges()
+{
+    // for (auto _edge : m_non_strict_edges)
+    // {
+    //     std::string _start_vertex = _edge.first;
+    //     std::cout << "start vertex: " << _start_vertex
+    //         << " results from remove_backedge: "
+    //         << remove_backedge(_start_vertex)
+    //         << std::endl;
+    // }
+    for (auto _task : m_tasks)
     {
-        std::string _start_vertex = _edge.first;
-        std::cout << _start_vertex << std::endl;
-        std::cout << has_cycle(_start_vertex) << std::endl;
+        remove_backedge(_task);
+    }
+    for (auto _data : m_data_units)
+    {
+        remove_backedge(_data);
     }
 }
 
@@ -359,52 +375,86 @@ void dag_parser::update_relations(std::string line)
     }
 }
 
-bool dag_parser::has_cycle(std::string start_vertex)
+void print_colors(std::unordered_map<std::string, colors> map)
 {
-    // initialize the color sets
-    for (auto _task_id : m_tasks)
+    for (auto item : map)
     {
-        m_white_vertices.insert(_task_id);
+        std::cout << item.first << ":" << item.second << std::endl;
     }
-    for (auto _data_unit_id : m_data_units)
-    {
-        m_white_vertices.insert(_data_unit_id);
-    }
-    m_gray_vertices.clear();
-    m_black_vertices.clear();
-
-    return find_cycle(start_vertex);
 }
 
-bool dag_parser::find_cycle(std::string current_vertex)
+bool dag_parser::remove_backedge(std::string start_vertex)
 {
-    m_white_vertices.erase(current_vertex);
-    m_gray_vertices.insert(current_vertex);
-    if (m_dataflow_dag.find(current_vertex) != m_dataflow_dag.end()
-        || !m_dataflow_dag[current_vertex].size())
+    for (auto _task : m_tasks)
     {
-        m_ending_vertices.insert(current_vertex);
+        m_colors[_task] = colors::white;
+        m_parents[_task] = "";
     }
-    else
+    for (auto _data : m_data_units)
     {
-        for (auto _child_vertex : m_dataflow_dag[current_vertex])
+        m_colors[_data] = colors::white;
+        m_parents[_data] = "";
+    }
+    m_colors[start_vertex] = colors::gray;
+    std::stack<std::string> _dfs_stack;
+    _dfs_stack.push(start_vertex);
+    while (!_dfs_stack.empty())
+    {
+        std::string _current_vertex = _dfs_stack.top(); _dfs_stack.pop();
+        for (auto _child_vertex_id : m_dataflow_dag[_current_vertex])
         {
-            if (m_black_vertices.find(_child_vertex) != m_black_vertices.end())
+            m_parents[_child_vertex_id] = _current_vertex;
+            if (m_colors[_child_vertex_id] == colors::white)
             {
-                continue;
+                m_colors[_child_vertex_id] = colors::gray;
+                _dfs_stack.push(_child_vertex_id);
             }
-            if (m_gray_vertices.find(_child_vertex) != m_gray_vertices.end())
+            else if (m_colors[_child_vertex_id] == colors::gray
+                || m_colors[_child_vertex_id] == colors::black)
             {
                 std::cout << "Cycle found" << std::endl;
-                return true;
-            }
-            if (find_cycle(_child_vertex))
-            {
+                if (!remove_non_strict_edge_from_cycle(start_vertex, _child_vertex_id))
+                {
+                    std::cout << "ERROR: dataflow has a deadlock!" << std::endl;
+                    exit(-1);
+                }
                 return true;
             }
         }
+        m_colors[_current_vertex] = colors::black;
     }
-    m_gray_vertices.erase(current_vertex);
-    m_black_vertices.insert(current_vertex);
+    return false;
+}
+
+bool dag_parser::remove_non_strict_edge_from_cycle(std::string start_vertex_id,
+    std::string end_vertex_id)
+{
+    std::pair<std::string, std::string> _edge =
+        std::make_pair(end_vertex_id, start_vertex_id);
+    if (m_non_strict_edges.find(_edge) != m_non_strict_edges.end())
+    {
+        // using erase remove idiom
+        m_dataflow_dag[end_vertex_id].erase(
+            std::remove(m_dataflow_dag[end_vertex_id].begin(),
+            m_dataflow_dag[end_vertex_id].end(), start_vertex_id),
+            m_dataflow_dag[end_vertex_id].end());
+        return true;
+    }
+    std::string _current_vertex_id = end_vertex_id;
+    while(_current_vertex_id != "")
+    {
+        std::pair<std::string, std::string> _edge =
+        std::make_pair(m_parents[_current_vertex_id], _current_vertex_id);
+        if (m_non_strict_edges.find(_edge) != m_non_strict_edges.end())
+        {
+            // using erase remove idiom
+            m_dataflow_dag[m_parents[_current_vertex_id]].erase(
+                std::remove(m_dataflow_dag[m_parents[_current_vertex_id]].begin(),
+                m_dataflow_dag[m_parents[_current_vertex_id]].end(), _current_vertex_id),
+                m_dataflow_dag[m_parents[_current_vertex_id]].end());
+            return true;
+        }
+        _current_vertex_id = m_parents[_current_vertex_id];
+    }
     return false;
 }

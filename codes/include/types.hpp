@@ -22,6 +22,22 @@ enum emulator_types
     emulator_types_end
 };
 
+enum io_api_types
+{
+    io_api_types_start, // variable for looping
+    e_posixio,
+    e_mpiio,
+    io_api_types_end // variable for looping
+};
+
+enum mpiio_types
+{
+    mpiio_types_start,
+    e_non_collective,
+    e_collective,
+    mpiio_types_end
+};
+
 enum dataflow_workload_types
 {
     dataflow_workload_types_start, // variable for looping

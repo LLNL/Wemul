@@ -12,20 +12,31 @@
  * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
  */
 
-#ifndef __UTILS_HPP__
-#define __UTILS_HPP__
+#include "base_io_api.hpp"
 
-#include <string>
-#include <vector>
-
-class utils
+base_io_api::base_io_api()
 {
-public:
-    // recursively seek all the file paths in the member directory
-    static void recursive_listfiles(const std::string& directory,
-        std::vector<std::string>& filepath_list,
-        const bool show_hidden_entries = false);
-    static bool file_ready(std::string filepath, int block_size, int segment_count);
-};
+}
 
-#endif // __UTILS_HPP__
+base_io_api::~base_io_api()
+{
+}
+
+void base_io_api::read_file(std::string filepath)
+{
+}
+
+void base_io_api::read_file(std::string filepath, int block_size,
+    int segment_count)
+{
+}
+
+void base_io_api::write_file(std::string filepath, int block_size,
+    int segment_count, bool is_fsync)
+{
+}
+
+void base_io_api::read_or_write(std::string filepath, int block_size,
+    int segment_count, bool is_write, bool read_check, bool is_fsync)
+{
+}

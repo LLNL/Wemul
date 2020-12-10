@@ -17,6 +17,7 @@
 #include "config_attributes.hpp"
 
 config_attributes::config_attributes(dataflow_workload_types dataflow_workload_type,
+        io_api_types io_api_type,
         std::string directory,
         std::string filename,
         std::string staging_directory,
@@ -52,9 +53,11 @@ config_attributes::config_attributes(dataflow_workload_types dataflow_workload_t
         int write_block_size,
         int write_segment_count,
         file_access_types read_access_type,
-        file_access_types write_access_type)
+        file_access_types write_access_type,
+        mpiio_types mpiio_type)
 {
     m_dataflow_workload_type = dataflow_workload_type;
+    m_io_api_type = io_api_type;
     m_directory = directory;
     m_filename = filename;
     m_staging_directory = staging_directory;
@@ -91,6 +94,7 @@ config_attributes::config_attributes(dataflow_workload_types dataflow_workload_t
     m_write_segment_count = write_segment_count;
     m_read_access_type = read_access_type;
     m_write_access_type = write_access_type;
+    m_mpiio_type = mpiio_type;
 }
 
 void config_attributes::print()

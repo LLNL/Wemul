@@ -31,11 +31,12 @@
 #include "axl.h"
 #include "checkpoint_restart.hpp"
 #include "profiler.hpp"
-#include "utils.hpp"
 
 extern profiler g_profiler;
 
-checkpoint_restart::checkpoint_restart(std::string directory,
+checkpoint_restart::checkpoint_restart(
+        std::shared_ptr<base_io_api> io_api,
+        std::string directory,
         std::string staging_directory,
         int num_checkpointing_ranks,
         int num_ck_files_per_rank,
@@ -48,6 +49,7 @@ checkpoint_restart::checkpoint_restart(std::string directory,
         axl_xfer_types axl_xfer_type)
         : dataflow_workload()
 {
+    m_io_api = io_api;
     m_directory = directory;
     m_staging_directory = staging_directory;
     m_num_checkpointing_ranks = num_checkpointing_ranks;
@@ -175,7 +177,7 @@ void checkpoint_restart::emulate(int argc, char** argv)
                     std::to_string(_file_id) + "." +
                     std::to_string(_current_time);
 
-                utils::write_file(_file_path, m_block_size, m_segment_count);
+                m_io_api->write_file(_file_path, m_block_size, m_segment_count);
                 std::cout << "File written: " << _file_path << std::endl;
 
                 if (m_enable_staging && m_use_axl)
@@ -267,7 +269,7 @@ void checkpoint_restart::emulate(int argc, char** argv)
 
     if(m_num_ck_files_per_rank < 2)
     {
-        utils::read_file(_file_path, m_block_size, m_segment_count);
+        m_io_api->read_file(_file_path, m_block_size, m_segment_count);
         std::cout << "File read: " << _file_path << std::endl;
     }
     else
@@ -311,7 +313,7 @@ void checkpoint_restart::emulate(int argc, char** argv)
         // std::cout << "Rank: " << m_world_rank << ":" <<  "Size of file path list: " << _file_path_list.size() << std::endl;
         for (auto _file_path_list_element : _file_path_list)
         {
-            utils::read_file(_file_path_list_element, m_block_size, m_segment_count);
+            m_io_api->read_file(_file_path_list_element, m_block_size, m_segment_count);
             std::cout << "File read: " << _file_path << std::endl;
         }
     }

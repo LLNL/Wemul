@@ -17,11 +17,12 @@ study:
           cmd: |
               num_nodes=16
               tasks_per_node=4
-              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+              wemul_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+              source /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/utils/prepare_lassen_build.sh
               input_dir=$BBPATH
               inter_node=
               producer_only=--producer_only
-              lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node $inter_node $producer_only > $(outfile)
+              lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node $inter_node $producer_only > $(outfile)
           depends: []
 
     - name: run-consumer
@@ -30,9 +31,10 @@ study:
           cmd: |
               num_nodes=16
               tasks_per_node=4
-              emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+              wemul_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+              source /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/utils/prepare_lassen_build.sh
               input_dir=$BBPATH
               inter_node=
               consumer_only=--consumer_only
-              lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node $inter_node $consumer_only >> $(outfile)
+              lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype pc --input_dir $input_dir --ranks_per_node $tasks_per_node $inter_node $consumer_only >> $(outfile)
           depends: [run-producer]

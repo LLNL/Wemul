@@ -26,7 +26,9 @@
 
 extern profiler g_profiler;
 
-dag_workload::dag_workload(bool use_ior,
+dag_workload::dag_workload(
+    std::shared_ptr<base_io_api> io_api,
+    bool use_ior,
     std::string directory,
     std::string filename,
     dag_workload_types dag_workload_type,
@@ -36,6 +38,7 @@ dag_workload::dag_workload(bool use_ior,
     int segment_count)
     : dataflow_workload()
 {
+    m_io_api = io_api;
     m_use_ior = use_ior;
     m_directory = directory;
     m_filename = filename;
@@ -107,7 +110,7 @@ void dag_workload::emulate(int argc, char** argv)
                     int _rank;
                     MPI_Comm_rank(_mpi_write_comm, &_rank);
                     // std::cout << _rank << ":" << world_rank << std::endl;
-                    utils::read_or_write(_filepath, m_block_size, m_segment_count, true, read_check);
+                    m_io_api->read_or_write(_filepath, m_block_size, m_segment_count, true, read_check);
                 }
                 MPI_Comm _mpi_read_comm = MPI_COMM_NULL;
                 if (m_read_comms.find(_itr2) != m_read_comms.end())
@@ -116,7 +119,7 @@ void dag_workload::emulate(int argc, char** argv)
                 {
                     int _rank;
                     MPI_Comm_rank(_mpi_read_comm, &_rank);
-                    utils::read_or_write(_filepath, m_block_size, m_segment_count, false, read_check);
+                    m_io_api->read_or_write(_filepath, m_block_size, m_segment_count, false, read_check);
                 }
             }
             MPI_Barrier(MPI_COMM_WORLD);

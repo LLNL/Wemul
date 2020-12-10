@@ -9,7 +9,8 @@ max_nodes=16
 tasks_per_node=4
 stage_dir=$BBPATH
 input_dir=/p/gpfs1/chowdhur/io_playground
-emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+wemul_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+source /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/utils/prepare_lassen_build.sh
 
 num_nodes=$min_nodes
 export LD_LIBRARY_PATH=/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
@@ -39,7 +40,7 @@ do
     printf "\n"
     # num_ck_ranks=$((num_nodes*tasks_per_node))
 
-    lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype cr --enable_staging --use_axl --block_size $block_size --segment_count $segment_count --stage_dir $stage_dir --input_dir $input_dir --num_ck_ranks $num_ck_ranks --num_ck_files_per_rank $num_ck_files_per_rank --ck_error_rate $ck_error_rate --checkpointing_interval $checkpointing_interval --stage_out_steps $stage_out_steps --axl_xfer_type $axl_transfer_type_sync --num_ck_iter $num_ck_iter
+    lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype cr --enable_staging --use_axl --block_size $block_size --segment_count $segment_count --stage_dir $stage_dir --input_dir $input_dir --num_ck_ranks $num_ck_ranks --num_ck_files_per_rank $num_ck_files_per_rank --ck_error_rate $ck_error_rate --checkpointing_interval $checkpointing_interval --stage_out_steps $stage_out_steps --axl_xfer_type $axl_transfer_type_sync --num_ck_iter $num_ck_iter
 
     #rm -rf $stage_dir/*
     rm -rf $input_dir/*

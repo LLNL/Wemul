@@ -13,6 +13,7 @@
  */
 
 #include <iostream>
+#include <mpi.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -147,6 +148,23 @@ int main(int argc, char** argv)
                 _config_attribs->m_dataflow_workload_type = dataflow_workload_types::e_app_workload;
             }
         }
+        if (_arg == "--io_api")
+        {
+            std::string _api_name = _arg_val;
+            if (_api_name == "posixio")
+            {
+                _config_attribs->m_io_api_type = io_api_types::e_posixio;
+            }
+            else if (_api_name == "mpiio")
+            {
+                _config_attribs->m_io_api_type = io_api_types::e_mpiio;
+            }
+            else
+            {
+                std::cout << "ERROR: Unsupported I/O API. Wemul supports 'posixio' and 'mpiio'" << std::endl;
+                return EXIT_FAILURE;
+            }
+        }
         if (_arg == "--input_dir")
         {
             _config_attribs->m_directory = _arg_val;
@@ -251,6 +269,18 @@ int main(int argc, char** argv)
         {
             g_profiler.m_enabled = true;
             g_profiler.m_out_filepath = _arg_val;
+        }
+        if (_arg == "--mpiio_type")
+        {
+            std::string _type = _arg_val;
+            if (_type == "noncollective")
+            {
+                _config_attribs->m_mpiio_type = mpiio_types::e_non_collective;
+            }
+            else if (_type == "collective")
+            {
+                _config_attribs->m_mpiio_type = mpiio_types::e_collective;
+            }
         }
     }
 

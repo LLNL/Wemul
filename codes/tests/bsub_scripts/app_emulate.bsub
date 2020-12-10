@@ -29,18 +29,14 @@ min_nodes=1
 max_nodes=16
 tasks_per_node=8
 input_dir=/p/gpfs1/chowdhur/io_playground
-emulator_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+wemul_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/build/wemul
+source /g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/utils/prepare_lassen_build.sh
 
 num_nodes=$min_nodes
 export LD_LIBRARY_PATH=/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
 
 file_per_process_read=--file_per_process_read
 file_per_process_write=--file_per_process_write
-num_ck_ranks=1
-num_ck_files_per_rank=1
-ck_error_rate=10
-checkpointing_interval=2
-num_ck_iter=1000
 read_block_size=268435456
 read_segment_count=128
 
@@ -68,7 +64,7 @@ do
         num_of_files=$((num_nodes * tasks_per_node / 2))
         write_filenames=$(generate_file_list $file_prefix $start_fileno $num_of_files)
         echo "Stage1: write Filenames: "$write_filenames
-        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype app --input_dir $input_dir --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype app --input_dir $input_dir --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames
 
         # Stage 2
         # shared read the files written by the earlier app;
@@ -84,7 +80,7 @@ do
         write_segment_count=64
         echo "Stage2: read Filenames: "$read_filenames
         echo "Stage2: write Filenames: "$write_filenames
-        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype app --input_dir $input_dir --read_block_size $read_block_size --read_segment_count $read_segment_count --read_filenames $read_filenames --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames $file_per_process_write
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype app --input_dir $input_dir --read_block_size $read_block_size --read_segment_count $read_segment_count --read_filenames $read_filenames --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames $file_per_process_write
     
         # Stage 3
         # file-per-process read the files written by the earlier app;
@@ -100,7 +96,7 @@ do
         write_segment_count=128
         echo "Stage3: read Filenames: "$read_filenames
         echo "Stage3: write Filenames: "$write_filenames
-        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $emulator_executable --type data --subtype app --input_dir $input_dir --read_block_size $read_block_size --read_segment_count $read_segment_count --read_filenames $read_filenames $file_per_process_read --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames
+        lrun -N$num_nodes -T$tasks_per_node --env "LD_PRELOAD=/g/g91/chowdhur/codes/darshan/build/lib/libdarshan.so" $wemul_executable --type data --subtype app --input_dir $input_dir --read_block_size $read_block_size --read_segment_count $read_segment_count --read_filenames $read_filenames $file_per_process_read --write_block_size $write_block_size --write_segment_count $write_segment_count --write_filenames $write_filenames
 
         rm -rf $input_dir/*
         iteration=$((iteration+1))
