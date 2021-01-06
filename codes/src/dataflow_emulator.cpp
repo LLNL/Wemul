@@ -79,7 +79,9 @@ dataflow_workload* dataflow_emulator::create_dataflow_workload(dataflow_workload
                 m_config_attributes->m_inter_node,
                 m_config_attributes->m_num_ranks_per_node,
                 m_config_attributes->m_producer_only,
-                m_config_attributes->m_consumer_only);
+                m_config_attributes->m_consumer_only,
+                m_config_attributes->m_block_size,
+                m_config_attributes->m_segment_count);
 
         case dataflow_workload_types::e_deep_learning:
             return new deep_learning(m_io_api,

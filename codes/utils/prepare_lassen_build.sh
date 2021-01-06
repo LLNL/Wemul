@@ -10,3 +10,5 @@ module use $module_file
 module load $shim_module flux
 module load $mpi_module
 
+export LD_LIBRARY_PATH=/opt/ibm/bb/lib:/g/g91/chowdhur/codes/AXL/install/lib64:/g/g91/chowdhur/codes/KVTree/install/lib64:$LD_LIBRARY_PATH
+

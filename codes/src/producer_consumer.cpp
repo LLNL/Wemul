@@ -99,11 +99,14 @@ void producer_consumer::initialize_MPI(int argc, char** argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
     MPI_Comm_group(MPI_COMM_WORLD, &m_world_group);
-    
+
     if(!(m_producer_only || m_consumer_only))
     {
+        if (world_size < 2)
+        {
+            std::cout << "WARNING: Wemul expects more than 1 total ranks in producer-consumer mode." << std::endl;
+        }
         int group_size = world_size / 2;
-
         int* producer_ranks = (int*) malloc(group_size * sizeof(int));
         int* consumer_ranks = (int*) malloc(group_size * sizeof(int));
 
