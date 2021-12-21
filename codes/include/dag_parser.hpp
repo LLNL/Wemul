@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -22,20 +22,31 @@
 #include <unordered_set>
 #include <vector>
 
-enum colors
+#include "graph.hpp"
+
+// enum colors
+// {
+//     black,
+//     gray,
+//     white
+// };
+
+struct string_pair_hash
 {
-    black,
-    gray,
-    white
+    template <class T1, class T2>
+    std::size_t operator() (const std::pair<T1, T2> &pair) const
+    {
+        return std::hash<T1>{}(pair.first) ^ std::hash<T2>{}(pair.second);
+    }
 };
 
 class dag_parser
 {
 public:
-    dag_parser(std::string filepath);
+    dag_parser(std::string filepath, std::shared_ptr<graph> in_graph);
     ~dag_parser();
     void parse_file();
-    void extract_dag();
+
     void print();
 
 private:
@@ -44,11 +55,10 @@ private:
     void update_data(std::string line);
     void update_relations(std::string line);
 
-    // extracting dag
-    void remove_backedges();
-    bool remove_backedge(std::string start_vertex);
-    bool remove_non_strict_edge_from_cycle(std::string start_vertex_id,
-        std::string end_vertex_id);
+    // // extracting dag
+    // void remove_backedges();
+    // std::string find_backedge(std::string start_vertex);
+    // bool remove_non_strict_edge_from_cycle(std::string tail_vertex_id);
 
     std::string m_filepath;
 
@@ -75,15 +85,9 @@ private:
     // These are stages; assign values to these maps according to the access type
     std::unordered_map<std::string, std::vector<std::string>> m_data_read_to_tasks;
     std::unordered_map<std::string, std::vector<std::string>> m_data_write_to_tasks;
-    std::set<std::pair<std::string, std::string>> m_non_strict_edges;
 
-    // maintaining dataflow graph
-    std::unordered_map<std::string, std::vector<std::string>> m_dataflow_graph;
-    std::unordered_map<std::string, std::vector<std::string>> m_dataflow_dag;
-    std::unordered_map<std::string, colors> m_colors;
-    std::unordered_map<std::string, std::string> m_parents;
-    std::unordered_set<std::string> m_starting_vertices;
-    std::unordered_set<std::string> m_ending_vertices;
+    // maintaining the dataflow graph
+    std::shared_ptr<graph> m_graph;
 
     int m_current_task_id;
     int m_current_line_no;

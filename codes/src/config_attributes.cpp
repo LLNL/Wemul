@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -48,13 +48,17 @@ config_attributes::config_attributes(dataflow_workload_types dataflow_workload_t
         std::string write_input_dirs,
         std::string read_filenames,
         std::string write_filenames,
-        int read_block_size,
-        int read_segment_count,
-        int write_block_size,
-        int write_segment_count,
+        std::string read_block_size_str,
+        std::string read_segment_count_str,
+        std::string write_block_size_str,
+        std::string write_segment_count_str,
         file_access_types read_access_type,
         file_access_types write_access_type,
-        mpiio_types mpiio_type)
+        mpiio_types mpiio_type,
+        std::string num_procs_per_file_read,
+        std::string num_procs_per_file_write,
+        std::string ranks_per_file_read,
+        std::string ranks_per_file_write)
 {
     m_dataflow_workload_type = dataflow_workload_type;
     m_io_api_type = io_api_type;
@@ -88,13 +92,17 @@ config_attributes::config_attributes(dataflow_workload_types dataflow_workload_t
     m_write_input_dirs = write_input_dirs;
     m_read_filenames = read_filenames;
     m_write_filenames = write_filenames;
-    m_read_block_size = read_block_size;
-    m_read_segment_count = read_segment_count;
-    m_write_block_size = write_block_size;
-    m_write_segment_count = write_segment_count;
+    m_read_block_size_str = read_block_size_str;
+    m_read_segment_count_str = read_segment_count_str;
+    m_write_block_size_str = write_block_size_str;
+    m_write_segment_count_str = write_segment_count_str;
     m_read_access_type = read_access_type;
     m_write_access_type = write_access_type;
     m_mpiio_type = mpiio_type;
+    m_num_procs_per_file_read = num_procs_per_file_read;
+    m_num_procs_per_file_write = num_procs_per_file_write;
+    m_ranks_per_file_read = ranks_per_file_read;
+    m_ranks_per_file_write = ranks_per_file_write;
 }
 
 void config_attributes::print()
@@ -126,4 +134,8 @@ void config_attributes::print()
     std::cout << "DAG file path: " << m_dag_filepath << std::endl;
     std::cout << "Read file names: " << m_read_filenames << std::endl;
     std::cout << "Write file names: " << m_write_filenames << std::endl;
+    std::cout << "Number of processes reading the file: " << m_num_procs_per_file_read << std::endl;
+    std::cout << "Number of processes writing the file: " << m_num_procs_per_file_write << std::endl;
+    std::cout << "Ranks reading the file: " << m_ranks_per_file_read << std::endl;
+    std::cout << "Ranks writing the file: " << m_ranks_per_file_write << std::endl;
 }

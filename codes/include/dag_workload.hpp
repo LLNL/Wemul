@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -27,7 +27,7 @@
 #include "types.hpp"
 
 // forward declaration
-class dag_parser;
+class dag_generator;
 
 class dag_workload : public dataflow_workload
 {
@@ -54,7 +54,7 @@ private:
     std::string m_filename;
     dag_workload_types m_dag_workload_type;
     workload_access_types m_dag_workload_access_type;
-    std::shared_ptr<dag_parser> m_dag_parser;
+    std::shared_ptr<dag_generator> m_dag_generator;
 
     void single_task_single_data();
     void single_task_multi_data();

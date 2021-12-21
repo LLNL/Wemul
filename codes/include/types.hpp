@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -73,7 +73,14 @@ enum file_access_types
     file_access_types_start,
     e_file_per_process,
     e_shared_file,
+    e_custom,
     file_access_types_end
+};
+
+enum dependency_types
+{
+    e_strict,
+    e_non_strict
 };
 
 enum axl_xfer_types

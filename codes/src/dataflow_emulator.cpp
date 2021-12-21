@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -110,12 +110,16 @@ dataflow_workload* dataflow_emulator::create_dataflow_workload(dataflow_workload
                 m_config_attributes->m_write_input_dirs,
                 m_config_attributes->m_read_filenames,
                 m_config_attributes->m_write_filenames,
-                m_config_attributes->m_read_block_size,
-                m_config_attributes->m_read_segment_count,
-                m_config_attributes->m_write_block_size,
-                m_config_attributes->m_write_segment_count,
+                m_config_attributes->m_read_block_size_str,
+                m_config_attributes->m_read_segment_count_str,
+                m_config_attributes->m_write_block_size_str,
+                m_config_attributes->m_write_segment_count_str,
                 m_config_attributes->m_read_access_type,
-                m_config_attributes->m_write_access_type);
+                m_config_attributes->m_write_access_type,
+                m_config_attributes->m_num_procs_per_file_read,
+                m_config_attributes->m_num_procs_per_file_write,
+                m_config_attributes->m_ranks_per_file_read,
+                m_config_attributes->m_ranks_per_file_write);
 
         default:
             return nullptr;

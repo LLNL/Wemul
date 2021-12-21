@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -66,7 +66,7 @@ private:
     // TODO: move to a utility class
     std::vector<std::string> tokenize_string(std::string in_regex_str, std::string in_string);
     void read_file(std::string filepath);
-    int test_axl();
+    // int test_axl();
 
     // debug variable
     int m_world_rank;

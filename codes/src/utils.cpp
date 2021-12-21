@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -85,3 +85,113 @@ bool utils::file_ready(std::string filepath, int block_size, int segment_count)
     }
     return true;
 }
+
+/*
+void utils::create_groups_from_dag()
+{
+    std::fstream _infile(m_dag_filepath, std::ios::in);
+    if(!_infile.is_open())
+    {
+        std::cout << "File not found!" << std::endl;
+        return;
+    }
+    std::string _line;
+    bool _is_read = false;
+    bool _is_non_strict = false;
+    bool _is_stages = false;
+    std::unordered_map<std::string, int> _task_id_to_rank;
+    int _current_rank = 0;
+    while(std::getline(_infile, _line))
+    {
+        if (_line == "READ")
+        {
+            _is_read = true;
+            continue;
+        }
+        else if (_line == "WRITE")
+        {
+            _is_read = false;
+            continue;
+        }
+        if (_line == "NONSTRICT")
+        {
+            _is_non_strict = true;
+            continue;
+        }
+        if (_line == "STAGES")
+        {
+            _is_stages = true;
+            continue;
+        }
+        if (!_is_non_strict && !_is_stages)
+        {
+            std::stringstream _linestream(_line);
+            std::string _data_id;
+            std::getline(_linestream, _data_id, ':');
+            std::string _tasks_line;
+            std::getline(_linestream, _tasks_line, ':');
+            std::stringstream _tasks_linestream(_tasks_line);
+            std::string _task_id;
+            std::vector<int> _task_ranks;
+            MPI_Group _mpi_group;
+            MPI_Comm _mpi_comm;
+            int _group_size = 0;
+            while(std::getline(_tasks_linestream, _task_id, ','))
+            {
+                if(_task_id_to_rank.find(_task_id) == _task_id_to_rank.end())
+                {
+                    _task_id_to_rank[_task_id] = _current_rank;
+                    _current_rank++;
+                }
+                _task_ranks.push_back(_task_id_to_rank[_task_id]);
+                _group_size++;
+            }
+            int *_task_ranks_array = new int[_task_ranks.size()];
+            int _id = 0;
+            for (int _itr : _task_ranks)
+            {
+                _task_ranks_array[_id] = _itr;
+                _id++;
+            }
+            MPI_Group_incl(m_world_group, _group_size, _task_ranks_array, &_mpi_group);
+            MPI_Comm_create_group(MPI_COMM_WORLD, _mpi_group, 0, &_mpi_comm);
+            delete[] _task_ranks_array;
+            if(_is_read) m_read_comms[_data_id] = _mpi_comm;
+            else m_write_comms[_data_id] = _mpi_comm;
+        }
+        else if (!_is_stages)
+        {
+            std::stringstream _linestream(_line);
+            std::string _data_id;
+            std::getline(_linestream, _data_id, ':');
+            std::string _task_id;
+            std::getline(_linestream, _task_id, ':');
+            if(m_non_strict_data_ranks.find(_data_id) == m_non_strict_data_ranks.end())
+            {
+                m_non_strict_data_ranks[_data_id] = std::unordered_set<int>();
+            }
+            m_non_strict_data_ranks[_data_id].insert(_task_id_to_rank[_task_id]);
+        }
+        if (_is_stages)
+        {
+            std::stringstream _linestream(_line);
+            std::string _stage_str;
+            std::getline(_linestream, _stage_str, ':');
+            int _stage = std::stoi(_stage_str);
+            std::string _data_units_str;
+            std::getline(_linestream, _data_units_str, ':');
+            if(m_data_units_per_stage.find(_stage) == m_data_units_per_stage.end())
+            {
+                m_data_units_per_stage[_stage] = std::unordered_set<std::string>();
+            }
+            std::stringstream _data_units_stream(_data_units_str);
+            std::string _data_id;
+            while(std::getline(_data_units_stream, _data_id, ','))
+            {
+                m_data_units_per_stage[_stage].insert(_data_id);
+            }
+        }
+    }
+}
+*/
+

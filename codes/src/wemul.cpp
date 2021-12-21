@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -249,21 +249,23 @@ int main(int argc, char** argv)
         {
             _config_attribs->m_write_filenames = _arg_val;
         }
+        // --read/write_block_size, --read/write_segment_count can take
+        // a list of block sizes, e.g., 1213:1233:2133:5456:...
         if(_arg == "--read_block_size")
         {
-            _config_attribs->m_read_block_size = std::stoi(_arg_val);
+            _config_attribs->m_read_block_size_str = _arg_val;
         }
         if(_arg == "--read_segment_count")
         {
-            _config_attribs->m_read_segment_count = std::stoi(_arg_val);
+            _config_attribs->m_read_segment_count_str = _arg_val;
         }
         if(_arg == "--write_block_size")
         {
-            _config_attribs->m_write_block_size = std::stoi(_arg_val);
+            _config_attribs->m_write_block_size_str = _arg_val;
         }
         if(_arg == "--write_segment_count")
         {
-            _config_attribs->m_write_segment_count = std::stoi(_arg_val);
+            _config_attribs->m_write_segment_count_str = _arg_val;
         }
         if (_arg == "--profile_out_filepath")
         {
@@ -281,6 +283,26 @@ int main(int argc, char** argv)
             {
                 _config_attribs->m_mpiio_type = mpiio_types::e_collective;
             }
+        }
+        if(_arg == "--num_procs_per_file_read")
+        {
+            // add the ':' separated string to the config attributes
+            _config_attribs->m_num_procs_per_file_read = _arg_val;
+        }
+        if(_arg == "--num_procs_per_file_write")
+        {
+            // add the ':' separated string to the config attributes
+            _config_attribs->m_num_procs_per_file_write = _arg_val;
+        }
+        if(_arg == "--ranks_per_file_read")
+        {
+            // add the ':' then ',' separated string to the config attributes
+            _config_attribs->m_ranks_per_file_read = _arg_val;
+        }
+        if(_arg == "--ranks_per_file_write")
+        {
+            // add the ':' then ',' separated string to the config attributes
+            _config_attribs->m_ranks_per_file_write = _arg_val;
         }
     }
 

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -118,7 +118,7 @@ void checkpoint_restart::emulate(int argc, char** argv)
 
     int _world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &_world_rank);
-    m_world_rank = _world_rank;
+    g_profiler.m_rank = m_world_rank = _world_rank;
 
     int _set_id = 0;
     bool _flushed_to_pfs = false;
@@ -335,59 +335,59 @@ std::vector<std::string> checkpoint_restart::tokenize_string(std::string in_rege
     return _string_tokens;
 }
 
-int checkpoint_restart::test_axl()
-{
-    printf("checkpoint_restart::test_axl started\n");
-    int rc = -1;
-    rc = AXL_Init(NULL);
-    printf("AXL INIT RC: %d\n", rc);
-    if (rc != AXL_SUCCESS) {
-        printf("AXL_Init() failed (error %d)\n", rc);
-        return rc;
-    }
+// int checkpoint_restart::test_axl()
+// {
+//     printf("checkpoint_restart::test_axl started\n");
+//     int rc = -1;
+//     rc = AXL_Init(NULL);
+//     printf("AXL INIT RC: %d\n", rc);
+//     if (rc != AXL_SUCCESS) {
+//         printf("AXL_Init() failed (error %d)\n", rc);
+//         return rc;
+//     }
 
-    int id = -1;
-    id = AXL_Create(AXL_XFER_ASYNC_BBAPI, "test_axl");
-    printf("AXL ID: %d\n", id);
-    if (id == -1) {
-        printf("AXL_Create() failed (error %d)\n", id);
-        return id;
-    }
+//     int id = -1;
+//     id = AXL_Create(AXL_XFER_ASYNC_BBAPI, "test_axl");
+//     printf("AXL ID: %d\n", id);
+//     if (id == -1) {
+//         printf("AXL_Create() failed (error %d)\n", id);
+//         return id;
+//     }
 
-    rc = AXL_Add(id, "/p/gpfs1/chowdhur/io_playground/testFile", "/p/gpfs1/chowdhur/io_playground/testFile2");
-    printf("AXL ADD RC: %d\n", rc);
-    if (rc != AXL_SUCCESS) {
-        printf("AXL_Add(..., %s, %s) failed (error %d)\n", "testFile", "testFile2", rc);
-        return rc;
-    }
+//     rc = AXL_Add(id, "/p/gpfs1/chowdhur/io_playground/testFile", "/p/gpfs1/chowdhur/io_playground/testFile2");
+//     printf("AXL ADD RC: %d\n", rc);
+//     if (rc != AXL_SUCCESS) {
+//         printf("AXL_Add(..., %s, %s) failed (error %d)\n", "testFile", "testFile2", rc);
+//         return rc;
+//     }
 
-    rc = AXL_Dispatch(id);
-    printf("AXL DISPATCH RC: %d\n", rc);
-    if (rc != AXL_SUCCESS) {
-        printf("AXL_Dispatch() failed (error %d)\n", rc);
-        return rc;
-    }
+//     rc = AXL_Dispatch(id);
+//     printf("AXL DISPATCH RC: %d\n", rc);
+//     if (rc != AXL_SUCCESS) {
+//         printf("AXL_Dispatch() failed (error %d)\n", rc);
+//         return rc;
+//     }
 
-    /* Wait for transfer to complete and finalize axl */
-    rc = AXL_Wait(id);
-    printf("AXL WAIT RC: %d\n", rc);
-    if (rc != AXL_SUCCESS) {
-        printf("AXL_Wait() failed (error %d)\n", rc);
-        return rc;
-    }
+//     /* Wait for transfer to complete and finalize axl */
+//     rc = AXL_Wait(id);
+//     printf("AXL WAIT RC: %d\n", rc);
+//     if (rc != AXL_SUCCESS) {
+//         printf("AXL_Wait() failed (error %d)\n", rc);
+//         return rc;
+//     }
 
-    rc = AXL_Free(id);
-    printf("AXL FREE RC: %d\n", rc);
-    if (rc != AXL_SUCCESS) {
-        printf("AXL_Free() failed (error %d)\n", rc);
-        return rc;
-    }
+//     rc = AXL_Free(id);
+//     printf("AXL FREE RC: %d\n", rc);
+//     if (rc != AXL_SUCCESS) {
+//         printf("AXL_Free() failed (error %d)\n", rc);
+//         return rc;
+//     }
 
-    rc = AXL_Finalize();
-    printf("AXL FINALIZE RC: %d\n", rc);
-    if (rc != AXL_SUCCESS) {
-        printf("AXL_Finalize() failed (error %d)\n", rc);
-        return rc;
-    }
-    return rc;
-}
+//     rc = AXL_Finalize();
+//     printf("AXL FINALIZE RC: %d\n", rc);
+//     if (rc != AXL_SUCCESS) {
+//         printf("AXL_Finalize() failed (error %d)\n", rc);
+//         return rc;
+//     }
+//     return rc;
+// }

@@ -12,21 +12,26 @@
  * Please read https://github.com/LLNL/Wemul/blob/main/LICENSE for full license text.
  */
 
-#ifndef __IOR_RUNNER_HPP__
-#define __IOR_RUNNER_HPP__
+#ifndef __DAG_GENERATOR_HPP__
+#define __DAG_GENERATOR_HPP__
 
+#include <memory>
 #include <string>
-#include <vector>
 
-class ior_runner
+class dag_parser;
+class graph;
+
+class dag_generator
 {
 public:
-    ior_runner(std::vector<std::string> params);
-    ~ior_runner();
-    int run();
+    dag_generator(std::string filepath);
+    ~dag_generator();
+
+    void print();
+
 private:
-    char** convert_params_to_argv();
-    std::vector<std::string> m_params;
+    std::shared_ptr<dag_parser> m_dag_parser;
+    std::shared_ptr<graph> m_graph;
 };
 
-#endif // __IOR_RUNNER_HPP__
+#endif // __DAG_GENERATOR_HPP__

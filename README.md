@@ -1,4 +1,4 @@
-# Wemul: Workflow I/O Emulation Framework (Wemul) v0.1
+# Wemul: Workflow I/O Emulation Framework (Wemul) v0.2
 
 The Workflow I/O Emulation Framework (Wemul) provides an MPI-enabled
 C++ interface for emulating HPC workflow I/O workloads with the features
@@ -63,9 +63,9 @@ To reference Wemul in a publication, please cite the following paper:
 * F. Chowdhury, Y. Zhu, F. Di Natale, A. Moody, E. Gonsiorowski, K. Mohror, and W. Yu, "Emulating I/O Behavior in Scientific Workflows on High Performance Computing Systems," 5th International Parallel Data Systems Workshop. November 2020, Virtual Workshop.
 
 ## Release
-Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+Copyright (c) 2021, Lawrence Livermore National Security, LLC.
 Produced at the Lawrence Livermore National Laboratory.
-Copyright (c) 2020, Florida State University. Contributions from
+Copyright (c) 2021, Florida State University. Contributions from
 the Computer Architecture and Systems Research Laboratory (CASTL)
 at the Department of Computer Science.
 <br/>

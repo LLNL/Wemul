@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -55,13 +55,17 @@ public:
         std::string write_input_dirs = "",
         std::string read_filenames = "",
         std::string write_filenames = "",
-        int read_block_size = -1,
-        int read_segment_count = -1,
-        int write_block_size = -1,
-        int write_segment_count = -1,
-        file_access_types read_access_type = file_access_types::e_shared_file,
-        file_access_types write_access_type = file_access_types::e_shared_file,
-        mpiio_types mpiio_type = mpiio_types::e_collective);
+        std::string read_block_size_str = "",
+        std::string read_segment_count_str = "",
+        std::string write_block_size_str = "",
+        std::string write_segment_count_str = "",
+        file_access_types read_access_type = file_access_types::e_custom,
+        file_access_types write_access_type = file_access_types::e_custom,
+        mpiio_types mpiio_type = mpiio_types::e_collective,
+        std::string num_procs_per_file_read = "",
+        std::string num_procs_per_file_write = "",
+        std::string ranks_per_file_read = "",
+        std::string ranks_per_file_write = "");
 
     void print();
 
@@ -98,13 +102,17 @@ public:
     std::string m_write_input_dirs;
     std::string m_read_filenames;
     std::string m_write_filenames;
-    int m_read_block_size;
-    int m_read_segment_count;
-    int m_write_block_size;
-    int m_write_segment_count;
+    std::string m_read_block_size_str;
+    std::string m_read_segment_count_str;
+    std::string m_write_block_size_str;
+    std::string m_write_segment_count_str;
     file_access_types m_read_access_type;
     file_access_types m_write_access_type;
     mpiio_types m_mpiio_type;
+    std::string m_num_procs_per_file_read;
+    std::string m_num_procs_per_file_write;
+    std::string m_ranks_per_file_read;
+    std::string m_ranks_per_file_write;
 };
 
 #endif // __CONFIG_ATTRIBUTES_HPP__

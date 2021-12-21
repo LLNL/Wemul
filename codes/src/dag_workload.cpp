@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -18,7 +18,7 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include "dag_parser.hpp"
+#include "dag_generator.hpp"
 #include "dag_workload.hpp"
 #include "ior_runner.hpp"
 #include "profiler.hpp"
@@ -47,9 +47,7 @@ dag_workload::dag_workload(
     m_dag_filepath = dag_filepath;
     m_block_size = block_size;
     m_segment_count = segment_count;
-    m_dag_parser = std::make_shared<dag_parser>(dag_filepath);
-    m_dag_parser->parse_file();
-    m_dag_parser->extract_dag();
+    m_dag_generator = std::make_shared<dag_generator>(dag_filepath);
 }
 
 dag_workload::~dag_workload()
@@ -386,6 +384,7 @@ void dag_workload::initialize_MPI(int argc, char** argv)
 
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+    g_profiler.m_rank = world_rank;
 
     MPI_Comm_group(MPI_COMM_WORLD, &m_world_group);
 

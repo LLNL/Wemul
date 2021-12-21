@@ -2,12 +2,12 @@
 
 #BSUB -G asccasc
 #BSUB -q pbatch
-#BSUB -nnodes 16
-#BSUB -W 120
+#BSUB -nnodes 32
+#BSUB -W 360
 
 min_nodes=1
-max_nodes=16
-max_iteration=5
+max_nodes=32
+max_iteration=25
 tasks_per_node=8
 output_dir=/p/gpfs1/chowdhur/io_playground/hacc_out
 hacc_io_executable=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes/tests/benchmarks/HACC_IO_KERNEL/HACC_IO

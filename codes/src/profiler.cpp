@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -20,6 +20,7 @@
 // declare global profiler
 profiler g_profiler;
 
+int profiler::m_rank = 0;
 bool profiler::m_enabled = false;
 timer profiler::m_timer = timer();
 std::string profiler::m_out_filepath = "profiler.out";
@@ -35,6 +36,7 @@ unsigned long long profiler::m_total_bytes_written = 0;
 void profiler::write_to_file()
 {
     std::ofstream _out_file;
+    m_out_filepath += ("." + std::to_string(m_rank));
     _out_file.open(m_out_filepath, std::ofstream::out | std::ofstream::app);
     if (_out_file.is_open())
     {

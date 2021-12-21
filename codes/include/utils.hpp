@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2020, Florida State University. Contributions from
+ * Copyright (c) 2021, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -26,6 +26,7 @@ public:
         std::vector<std::string>& filepath_list,
         const bool show_hidden_entries = false);
     static bool file_ready(std::string filepath, int block_size, int segment_count);
+    static void create_groups_from_dag();
 };
 
 #endif // __UTILS_HPP__
