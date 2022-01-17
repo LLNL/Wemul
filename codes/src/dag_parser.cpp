@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2022, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2021, Florida State University. Contributions from
+ * Copyright (c) 2022, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -203,6 +203,10 @@ void dag_parser::update_tasks(std::string line)
     std::string _task_id;
     std::getline(_linestream, _task_id, ' ');
     m_tasks.insert(_task_id);
+    std::string _app_id;
+    std::getline(_linestream, _app_id, ' ');
+    m_apps.insert(_app_id);
+    m_app_to_tasks[_app_id].push_back(_task_id);
     std::string _task_name;
     std::getline(_linestream, _task_name, ' ');
     m_task_names[_task_id] = _task_name;

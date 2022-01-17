@@ -25,6 +25,7 @@ gpfs_dir=/p/gpfs1/chowdhur/io_playground
 bb_dir=$BBPATH
 tmpfs_dir=/dev/shm
 ramdisk_dir=/tmp
+vast_dir=/p/vast1/chowdhur
 
 export LD_LIBRARY_PATH=/opt/ibm/bb/lib:$LD_LIBRARY_PATH
 
@@ -40,7 +41,7 @@ transfer_size_unit=M # MiB
 test_file_name=ior_test_file
 
 # for storage_dir in $gpfs_dir $tmpfs_dir
-for storage_dir in $gpfs_dir $bb_dir $tmpfs_dir
+for storage_dir in $gpfs_dir $bb_dir $tmpfs_dir $vast_dir
 do
     printf "\nStorage dir: "
     echo $storage_dir

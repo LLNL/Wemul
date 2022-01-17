@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2022, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2021, Florida State University. Contributions from
+ * Copyright (c) 2022, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -109,6 +109,16 @@ int main(int argc, char** argv)
         if(_arg == "--file_per_process_write")
         {
             _config_attribs->m_write_access_type = file_access_types::e_file_per_process;
+            continue;
+        }
+        if(_arg == "--shared_file_read")
+        {
+            _config_attribs->m_read_access_type = file_access_types::e_shared_file;
+            continue;
+        }
+        if(_arg == "--shared_file_write")
+        {
+            _config_attribs->m_write_access_type = file_access_types::e_shared_file;
             continue;
         }
         if(_arg == "--enable_profiler")

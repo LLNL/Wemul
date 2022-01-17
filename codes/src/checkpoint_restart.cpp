@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2022, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2021, Florida State University. Contributions from
+ * Copyright (c) 2022, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -70,7 +70,7 @@ checkpoint_restart::checkpoint_restart(
     if (m_enable_staging && m_use_axl)
     {
         int rc = -1;
-        rc = AXL_Init(NULL);
+        rc = AXL_Init();
         // printf("AXL INIT RC: %d\n", rc);
         if (rc != AXL_SUCCESS)
         {
@@ -127,7 +127,7 @@ void checkpoint_restart::emulate(int argc, char** argv)
     if (m_enable_staging && m_use_axl)
     {
         m_axl_id = -1;
-        m_axl_id = AXL_Create(axl_xfer_type, "transfer_for_stage_out");
+        m_axl_id = AXL_Create(axl_xfer_type, "transfer_for_stage_out", "transfer_state_file");
         // printf("AXL ID: %d\n", m_axl_id);
         if (m_axl_id == -1)
         {
@@ -148,7 +148,7 @@ void checkpoint_restart::emulate(int argc, char** argv)
         if (m_enable_staging && m_use_axl && _flushed_to_pfs)
         {
             m_axl_id = -1;
-            m_axl_id = AXL_Create(axl_xfer_type, "transfer_for_stage_out");
+            m_axl_id = AXL_Create(axl_xfer_type, "transfer_for_stage_out", "transfer_state_file");
             // printf("AXL ID: %d\n", m_axl_id);
             if (m_axl_id == -1)
             {

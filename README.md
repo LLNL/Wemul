@@ -14,7 +14,7 @@ For details on its usage, see [docs/README.md](https://github.com/LLNL/Wemul/blo
 - [KVTree](https://github.com/LLNL/KVTree)
 - [AXL](https://github.com/ECP-VeloC/AXL)
 ### How to build
-#### Build IOR
+#### Build IOR [Optional]
 Build IOR by following the instructions mentioned [here](https://github.com/LLNL/ior/blob/master/README).
 Run the following in the terminal
 ```shell
@@ -63,9 +63,9 @@ To reference Wemul in a publication, please cite the following paper:
 * F. Chowdhury, Y. Zhu, F. Di Natale, A. Moody, E. Gonsiorowski, K. Mohror, and W. Yu, "Emulating I/O Behavior in Scientific Workflows on High Performance Computing Systems," 5th International Parallel Data Systems Workshop. November 2020, Virtual Workshop.
 
 ## Release
-Copyright (c) 2021, Lawrence Livermore National Security, LLC.
+Copyright (c) 2022, Lawrence Livermore National Security, LLC.
 Produced at the Lawrence Livermore National Laboratory.
-Copyright (c) 2021, Florida State University. Contributions from
+Copyright (c) 2022, Florida State University. Contributions from
 the Computer Architecture and Systems Research Laboratory (CASTL)
 at the Department of Computer Science.
 <br/>

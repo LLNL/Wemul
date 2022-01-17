@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021, Lawrence Livermore National Security, LLC.
+ * Copyright (c) 2022, Lawrence Livermore National Security, LLC.
  * Produced at the Lawrence Livermore National Laboratory.
- * Copyright (c) 2021, Florida State University. Contributions from
+ * Copyright (c) 2022, Florida State University. Contributions from
  * the Computer Architecture and Systems Research Laboratory (CASTL)
  * at the Department of Computer Science.
  *
@@ -59,11 +59,6 @@ app_workload::app_workload(
     m_num_procs_per_file_write = num_procs_per_file_write;
     m_ranks_per_file_read = ranks_per_file_read;
     m_ranks_per_file_write = ranks_per_file_write;
-
-    prepare_input_dir_list();
-    prepare_filename_list();
-    prepare_filesize_lists();
-    prepare_file_access_lists();
 }
 
 app_workload::~app_workload()
@@ -249,10 +244,29 @@ void app_workload::prepare_input_dir_list()
     {
         m_read_input_dir_list.push_back(_input_dir);
     }
+    if (m_read_input_dir_list.size() < m_world_size &&
+        m_read_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_read_input_dir_list.size();
+        for (int i = m_read_input_dir_list.size(); i < m_world_size; i++)
+        {
+            m_read_input_dir_list.push_back(m_read_input_dir_list[orig_size-1]);
+        }
+    }
+
     std::stringstream _write_input_dirs_stream(m_write_input_dirs);
     while(std::getline(_write_input_dirs_stream, _input_dir, _separator))
     {
         m_write_input_dir_list.push_back(_input_dir);
+    }
+    if (m_write_input_dir_list.size() < m_world_size &&
+        m_write_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_write_input_dir_list.size();
+        for (int i = m_write_input_dir_list.size(); i < m_world_size; i++)
+        {
+            m_write_input_dir_list.push_back(m_write_input_dir_list[orig_size-1]);
+        }
     }
     // for (auto dirname : m_write_input_dir_list)
     // {
@@ -270,10 +284,30 @@ void app_workload::prepare_filename_list()
     {
         m_read_filename_list.push_back(_filename);
     }
+    if (m_read_filename_list.size() < m_world_size &&
+        m_read_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_read_filename_list.size();
+        for (int i = m_read_filename_list.size(); i < m_world_size; i++)
+        {
+            m_read_filename_list.push_back(
+                m_read_filename_list[orig_size-1] + "." + std::to_string(i));
+        }
+    }
     std::stringstream _write_filenames_stream(m_write_filenames);
     while(std::getline(_write_filenames_stream, _filename, _separator))
     {
         m_write_filename_list.push_back(_filename);
+    }
+    if (m_write_filename_list.size() < m_world_size &&
+        m_write_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_write_filename_list.size();
+        for (int i = m_write_filename_list.size(); i < m_world_size; i++)
+        {
+            m_write_filename_list.push_back(
+                m_write_filename_list[orig_size-1] + "." + std::to_string(i));
+        }
     }
 }
 
@@ -288,10 +322,28 @@ void app_workload::prepare_filesize_lists()
     {
         m_read_block_sizes.push_back(std::stoi(_block_size_str));
     }
+    if (m_read_block_sizes.size() < m_world_size &&
+        m_read_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_read_block_sizes.size();
+        for (int i = m_read_block_sizes.size(); i < m_world_size; i++)
+        {
+            m_read_block_sizes.push_back(m_read_block_sizes[orig_size-1]);
+        }
+    }
     std::stringstream _read_segment_count_str_stream(m_read_segment_count_str);
     while(std::getline(_read_segment_count_str_stream, _segment_count_str, _separator))
     {
         m_read_segment_counts.push_back(std::stoi(_segment_count_str));
+    }
+    if (m_read_segment_counts.size() < m_world_size &&
+        m_read_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_read_segment_counts.size();
+        for (int i = m_read_segment_counts.size(); i < m_world_size; i++)
+        {
+            m_read_segment_counts.push_back(m_read_segment_counts[orig_size-1]);
+        }
     }
     std::stringstream _write_block_size_str_stream(m_write_block_size_str);
     // std::cout << m_write_block_size_str << std::endl;
@@ -299,11 +351,29 @@ void app_workload::prepare_filesize_lists()
     {
         m_write_block_sizes.push_back(std::stoi(_block_size_str));
     }
+    if (m_write_block_sizes.size() < m_world_size &&
+        m_write_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_write_block_sizes.size();
+        for (int i = m_write_block_sizes.size(); i < m_world_size; i++)
+        {
+            m_write_block_sizes.push_back(m_write_block_sizes[orig_size-1]);
+        }
+    }
     std::stringstream _write_segment_count_str_stream(m_write_segment_count_str);
     // std::cout << m_write_segment_count_str << std::endl;
     while(std::getline(_write_segment_count_str_stream, _segment_count_str, _separator))
     {
         m_write_segment_counts.push_back(std::stoi(_segment_count_str));
+    }
+    if (m_write_segment_counts.size() < m_world_size &&
+        m_write_access_type == file_access_types::e_file_per_process)
+    {
+        int orig_size = m_write_segment_counts.size();
+        for (int i = m_write_segment_counts.size(); i < m_world_size; i++)
+        {
+            m_write_segment_counts.push_back(m_write_segment_counts[orig_size-1]);
+        }
     }
 }
 
@@ -459,6 +529,12 @@ void app_workload::initialize_MPI(int argc, char** argv)
     MPI_Comm_group(MPI_COMM_WORLD, &m_world_group);
 
     g_profiler.m_rank = m_world_rank;
+
+    // prepare the configuration space for current run
+    prepare_input_dir_list();
+    prepare_filename_list();
+    prepare_filesize_lists();
+    prepare_file_access_lists();
 
     for (auto _data_to_tasks_item : m_read_data_to_tasks)
     {
