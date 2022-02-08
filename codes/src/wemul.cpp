@@ -25,117 +25,121 @@ extern profiler g_profiler;
 
 int main(int argc, char** argv)
 {
-    if(argc < 5)
-    {
-        std::cout << "command: emulator --type data --subtype pc\n";
-        std::cout << "emulator types: data, etc.\n";
-        std::cout << "emulator subtypes for data: checkpoint restart (cr), producer consumer (pc), deep learning (dl), etc.\n";
-        std::cout << "for deep learning emulator: --input_dir <DIRECTORY>\n";
-        return EXIT_FAILURE;
-    }
+    // if(argc < 5)
+    // {
+    //     std::cout << "command: wemul --type data --subtype pc\n";
+    //     std::cout << "emulation types: data, etc.\n";
+    //     std::cout << "emulation subtypes for data: checkpoint restart (cr), producer consumer (pc), deep learning (dl), etc.\n";
+    //     std::cout << "for deep learning emulation: --input_dir <DIRECTORY>\n";
+    //     return EXIT_FAILURE;
+    // }
 
-    emulator_types _emulator_type = emulator_types::emulator_types_start;
     config_attributes* _config_attribs = new config_attributes();
 
     for (int i = 1; i < argc; i++)
     {
         std::string _arg(argv[i]);
 
-        if(_arg == "--inter_node")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_inter_node])
         {
             _config_attribs->m_inter_node = true;
             continue;
         }
-        if(_arg == "--use_ior")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_use_ior])
         {
             _config_attribs->m_use_ior = true;
             continue;
         }
-        if(_arg == "--use_axl")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_use_axl])
         {
             _config_attribs->m_use_axl = true;
             continue;
         }
-        if(_arg == "--producer_only")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_producer_only])
         {
             _config_attribs->m_producer_only = true;
             continue;
         }
-        if(_arg == "--consumer_only")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_consumer_only])
         {
             _config_attribs->m_consumer_only = true;
             continue;
         }
-        if(_arg == "--enable_staging")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_enable_staging])
         {
             _config_attribs->m_enable_staging = true;
             continue;
         }
-        if(_arg == "--single_task_single_data")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_single_task_single_data])
         {
-            _config_attribs->m_dag_workload_type = dag_workload_types::e_single_task_single_data;
+            _config_attribs->m_dag_workload_type = dag_workload_types::e_dwt_single_task_single_data;
             continue;
         }
-        if(_arg == "--single_task_multi_data")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_single_task_multi_data])
         {
-            _config_attribs->m_dag_workload_type = dag_workload_types::e_single_task_multi_data;
+            _config_attribs->m_dag_workload_type = dag_workload_types::e_dwt_single_task_multi_data;
             continue;
         }
-        if(_arg == "--multi_task_single_data")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_multi_task_single_data])
         {
-            _config_attribs->m_dag_workload_type = dag_workload_types::e_multi_task_single_data;
+            _config_attribs->m_dag_workload_type = dag_workload_types::e_dwt_multi_task_single_data;
             continue;
         }
-        if(_arg == "--multi_task_multi_data")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_multi_task_multi_data])
         {
-            _config_attribs->m_dag_workload_type = dag_workload_types::e_multi_task_multi_data;
+            _config_attribs->m_dag_workload_type = dag_workload_types::e_dwt_multi_task_multi_data;
             continue;
         }
-        if(_arg == "--dag_read")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_dag_read])
         {
             _config_attribs->m_dag_workload_access_type = workload_access_types::e_read;
             continue;
         }
-        if(_arg == "--dag_write")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_dag_write])
         {
             _config_attribs->m_dag_workload_access_type = workload_access_types::e_write;
             continue;
         }
-        if(_arg == "--file_per_process_read")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_file_per_process_read])
         {
             _config_attribs->m_read_access_type = file_access_types::e_file_per_process;
             continue;
         }
-        if(_arg == "--file_per_process_write")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_file_per_process_write])
         {
             _config_attribs->m_write_access_type = file_access_types::e_file_per_process;
             continue;
         }
-        if(_arg == "--shared_file_read")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_shared_file_read])
         {
             _config_attribs->m_read_access_type = file_access_types::e_shared_file;
             continue;
         }
-        if(_arg == "--shared_file_write")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_shared_file_write])
         {
             _config_attribs->m_write_access_type = file_access_types::e_shared_file;
             continue;
         }
-        if(_arg == "--enable_profiler")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_enable_profiler])
         {
             g_profiler.m_enabled = true;
             continue;
         }
 
         std::string _arg_val(argv[++i]);
-        if (_arg == "--type")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_config_file])
+        {
+            _config_attribs->m_config_file = _arg_val;
+            _config_attribs->parse_config_file();
+        }
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_type])
         {
             if (_arg_val == "data")
             {
-                _emulator_type = emulator_types::e_dataflow;
+                _config_attribs->m_emulation_type = emulation_types::e_dataflow;
             }
         }
-        if (_arg == "--subtype")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_subtype])
         {
             if (_arg_val == "cr")
             {
@@ -158,7 +162,7 @@ int main(int argc, char** argv)
                 _config_attribs->m_dataflow_workload_type = dataflow_workload_types::e_app_workload;
             }
         }
-        if (_arg == "--io_api")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_io_api])
         {
             std::string _api_name = _arg_val;
             if (_api_name == "posixio")
@@ -175,114 +179,114 @@ int main(int argc, char** argv)
                 return EXIT_FAILURE;
             }
         }
-        if (_arg == "--input_dir")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_input_dir])
         {
             _config_attribs->m_directory = _arg_val;
         }
-        if (_arg == "--filename")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_filename])
         {
             _config_attribs->m_filename = _arg_val;
         }
-        if (_arg == "--stage_dir")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_stage_dir])
         {
             _config_attribs->m_staging_directory = _arg_val;
         }
-        if(_arg == "--ranks_per_node")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_ranks_per_node])
         {
             _config_attribs->m_num_ranks_per_node = std::stoi(_arg_val);
         }
-        if(_arg == "--num_ck_ranks")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_num_ck_ranks])
         {
             _config_attribs->m_num_checkpointing_ranks = std::stoi(_arg_val);
         }
-        if(_arg == "--transfer_size")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_transfer_size])
         {
             _config_attribs->m_transfer_size = std::stoi(_arg_val);
         }
-        if(_arg == "--block_size")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_block_size])
         {
             _config_attribs->m_block_size = std::stoi(_arg_val);
         }
-        if(_arg == "--segment_count")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_segment_count])
         {
             _config_attribs->m_segment_count = std::stoi(_arg_val);
         }
-        if(_arg == "--num_ck_files_per_rank")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_num_ck_files_per_rank])
         {
             _config_attribs->m_num_ck_files_per_rank = std::stoi(_arg_val);
         }
-        if(_arg == "--checkpointing_interval")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_checkpointing_interval])
         {
             _config_attribs->m_checkpointing_interval = std::stod(_arg_val);
         }
-        if(_arg == "--stage_out_steps")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_stage_out_steps])
         {
             _config_attribs->m_stage_out_steps = std::stoi(_arg_val);
         }
-        if(_arg == "--ck_error_rate")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_ck_error_rate])
         {
             _config_attribs->m_ck_error_rate = std::stof(_arg_val);
         }
-        if(_arg == "--num_ck_iter")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_num_ck_iter])
         {
             _config_attribs->m_num_checkpoint_iterations = std::stof(_arg_val);
         }
-        if(_arg == "--axl_xfer_type")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_axl_xfer_type])
         {
             _config_attribs->m_axl_xfer_type = (axl_xfer_types) std::stoi(_arg_val);
         }
-        if(_arg == "--num_epochs")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_num_epochs])
         {
             _config_attribs->m_num_epochs = std::stoi(_arg_val);
         }
-        if(_arg == "--comp_time_per_epoch")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_comp_time_per_epoch])
         {
             _config_attribs->m_comp_time_per_epoch = std::stoi(_arg_val);
         }
-        if(_arg == "--dag_file")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_dag_file])
         {
             _config_attribs->m_dag_filepath = _arg_val;
         }
-        if(_arg == "--read_input_dirs")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_read_input_dirs])
         {
             _config_attribs->m_read_input_dirs = _arg_val;
         }
-        if(_arg == "--write_input_dirs")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_write_input_dirs])
         {
             _config_attribs->m_write_input_dirs = _arg_val;
         }
-        if(_arg == "--read_filenames")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_read_filenames])
         {
             _config_attribs->m_read_filenames = _arg_val;
         }
-        if(_arg == "--write_filenames")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_write_filenames])
         {
             _config_attribs->m_write_filenames = _arg_val;
         }
         // --read/write_block_size, --read/write_segment_count can take
         // a list of block sizes, e.g., 1213:1233:2133:5456:...
-        if(_arg == "--read_block_size")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_read_block_size])
         {
             _config_attribs->m_read_block_size_str = _arg_val;
         }
-        if(_arg == "--read_segment_count")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_read_segment_count])
         {
             _config_attribs->m_read_segment_count_str = _arg_val;
         }
-        if(_arg == "--write_block_size")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_write_block_size])
         {
             _config_attribs->m_write_block_size_str = _arg_val;
         }
-        if(_arg == "--write_segment_count")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_write_segment_count])
         {
             _config_attribs->m_write_segment_count_str = _arg_val;
         }
-        if (_arg == "--profile_out_filepath")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_profile_out_filepath])
         {
             g_profiler.m_enabled = true;
             g_profiler.m_out_filepath = _arg_val;
         }
-        if (_arg == "--mpiio_type")
+        if (_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_mpiio_type])
         {
             std::string _type = _arg_val;
             if (_type == "noncollective")
@@ -294,22 +298,22 @@ int main(int argc, char** argv)
                 _config_attribs->m_mpiio_type = mpiio_types::e_collective;
             }
         }
-        if(_arg == "--num_procs_per_file_read")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_num_procs_per_file_read])
         {
             // add the ':' separated string to the config attributes
             _config_attribs->m_num_procs_per_file_read = _arg_val;
         }
-        if(_arg == "--num_procs_per_file_write")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_num_procs_per_file_write])
         {
             // add the ':' separated string to the config attributes
             _config_attribs->m_num_procs_per_file_write = _arg_val;
         }
-        if(_arg == "--ranks_per_file_read")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_ranks_per_file_read])
         {
             // add the ':' then ',' separated string to the config attributes
             _config_attribs->m_ranks_per_file_read = _arg_val;
         }
-        if(_arg == "--ranks_per_file_write")
+        if(_arg == "--" + _config_attribs->m_type_to_str_map[(int) config_attr_types::e_ranks_per_file_write])
         {
             // add the ':' then ',' separated string to the config attributes
             _config_attribs->m_ranks_per_file_write = _arg_val;
@@ -317,7 +321,7 @@ int main(int argc, char** argv)
     }
 
     workflow_emulator* _workflow_emulator = nullptr;
-    if(_emulator_type == emulator_types::e_dataflow)
+    if(_config_attribs->m_emulation_type == emulation_types::e_dataflow)
     {
         _workflow_emulator = new dataflow_emulator(_config_attribs);
     }

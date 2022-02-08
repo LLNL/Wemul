@@ -15,11 +15,11 @@
 #ifndef __TYPES_HPP__
 #define __TYPES_HPP__
 
-enum emulator_types
+enum emulation_types
 {
-    emulator_types_start,
+    emulation_types_start,
     e_dataflow,
-    emulator_types_end
+    emulation_types_end
 };
 
 enum io_api_types
@@ -52,10 +52,10 @@ enum dataflow_workload_types
 enum dag_workload_types
 {
     dag_workload_types_start, // variable for looping
-    e_single_task_single_data,
-    e_single_task_multi_data,
-    e_multi_task_single_data,
-    e_multi_task_multi_data,
+    e_dwt_single_task_single_data,
+    e_dwt_single_task_multi_data,
+    e_dwt_multi_task_single_data,
+    e_dwt_multi_task_multi_data,
     dag_workload_types_end // variable for looping
 };
 
@@ -102,6 +102,62 @@ enum axl_xfer_types
                         */
     e_pthread,      /* parallel copy using pthreads */
     axl_transfer_types_end
+};
+
+enum config_attr_types
+{
+    e_config_file,
+    e_inter_node,
+    e_use_ior,
+    e_use_axl,
+    e_producer_only,
+    e_consumer_only,
+    e_enable_staging,
+    e_single_task_single_data,
+    e_single_task_multi_data,
+    e_multi_task_single_data,
+    e_multi_task_multi_data,
+    e_dag_read,
+    e_dag_write,
+    e_file_per_process_read,
+    e_file_per_process_write,
+    e_shared_file_read,
+    e_shared_file_write,
+    e_enable_profiler,
+    e_type,
+    e_subtype,
+    e_io_api,
+    e_input_dir,
+    e_filename,
+    e_stage_dir,
+    e_ranks_per_node,
+    e_num_ck_ranks,
+    e_transfer_size,
+    e_block_size,
+    e_segment_count,
+    e_num_ck_files_per_rank,
+    e_checkpointing_interval,
+    e_stage_out_steps,
+    e_ck_error_rate,
+    e_num_ck_iter,
+    e_axl_xfer_type,
+    e_num_epochs,
+    e_comp_time_per_epoch,
+    e_dag_file,
+    e_read_input_dirs,
+    e_write_input_dirs,
+    e_read_filenames,
+    e_write_filenames,
+    e_read_block_size,
+    e_read_segment_count,
+    e_write_block_size,
+    e_write_segment_count,
+    e_profile_out_filepath,
+    e_mpiio_type,
+    e_num_procs_per_file_read,
+    e_num_procs_per_file_write,
+    e_ranks_per_file_read,
+    e_ranks_per_file_write
 };
 
 #endif // __TYPES_HPP__

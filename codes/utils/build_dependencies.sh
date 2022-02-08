@@ -8,7 +8,7 @@
 # module load $shim_module flux
 # module load $mpi_module
 
-export WEMUL_HOME=/g/g91/chowdhur/codes/hawk_gitlab/hpc_dataflow_manager/workflow_emulator/codes
+export WEMUL_HOME=/g/g91/chowdhur/codes/Wemul/codes
 pushd $WEMUL_HOME
 
 mkdir -p libs
@@ -28,7 +28,7 @@ make
 make install
 make test
 cd ../.. # currently on libs dir
-echo "KVTree build finished [1/3]"
+echo "KVTree build finished [1/4]"
 
 ## Download and build AXL
 # export KVTREE_LIBRARIES=$WEMUL_HOME/libs/kvtree/install/lib64
@@ -45,16 +45,28 @@ make
 make install
 make test
 cd ../.. # currently on libs dir
-echo "AXL build finished [2/3]"
+echo "AXL build finished [2/4]"
+
+## Downlaod and build jsoncpp
+echo "Downloading jsoncpp"
+git clone https://github.com/open-source-parsers/jsoncpp jsoncpp
+cd jsoncpp
+mkdir build
+cd build
+cmake -DJSONCPP_WITH_PKGCONFIG_SUPPORT=OFF -DJSONCPP_WITH_TESTS=OFF ..
+make
+cd ../.. # currently on libs dir
+echo "jsoncpp build finished [3/4]"
 
 echo "Preparing build environment..."
 cd $WEMUL_HOME
 export KVTREE_DIR=$WEMUL_HOME/libs/kvtree/install
 export AXL_DIR=$WEMUL_HOME/libs/AXL/install
+export JSONCPP_DIR=$WEMUL_HOME/libs/jsoncpp/build
 echo "KVTree installed in: "$KVTREE_DIR
 echo "AXL installed in: "$AXL_DIR
-export LD_LIBRARY_PATH=/opt/ibm/bb/lib:$AXL_DIR/lib64:$KVTREE_DIR/lib64:$LD_LIBRARY_PATH
-echo "Build environment preparation done! [3/3]"
+echo "JSONCPP installed in: "$JSONCPP_DIR
+export LD_LIBRARY_PATH=/opt/ibm/bb/lib:$AXL_DIR/lib64:$KVTREE_DIR/lib64:$JSONCPP_DIR/lib:$LD_LIBRARY_PATH
+echo "Build environment preparation done! [4/4]"
 
 popd
-

@@ -16,6 +16,7 @@
 #define __CONFIG_ATTRIBUTES_HPP__
 
 #include <string>
+#include <unordered_map>
 
 #include "types.hpp"
 
@@ -23,6 +24,8 @@ class config_attributes
 {
 public:
     config_attributes(
+        emulation_types emulation_type = emulation_types::e_dataflow,
+        std::string config_file = "",
         dataflow_workload_types dataflow_workload_type = dataflow_workload_types::dataflow_workload_types_start,
         io_api_types io_api_type = io_api_types::e_mpiio,
         std::string directory = ".",
@@ -67,8 +70,13 @@ public:
         std::string ranks_per_file_read = "",
         std::string ranks_per_file_write = "");
 
+    void construct_type_to_str_map();
+    void parse_config_file();
     void print();
 
+    emulation_types m_emulation_type;
+    std::unordered_map<int, std::string> m_type_to_str_map;
+    std::string m_config_file;
     dataflow_workload_types m_dataflow_workload_type;
     io_api_types m_io_api_type;
     std::string m_directory;

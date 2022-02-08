@@ -60,22 +60,22 @@ void dag_workload::emulate(int argc, char** argv)
     {
         switch (m_dag_workload_type)
         {
-            case dag_workload_types::e_single_task_single_data:
+            case dag_workload_types::e_dwt_single_task_single_data:
             {
                 single_task_single_data();
                 break;
             }
-            case dag_workload_types::e_single_task_multi_data:
+            case dag_workload_types::e_dwt_single_task_multi_data:
             {
                 single_task_multi_data();
                 break;
             }
-            case dag_workload_types::e_multi_task_single_data:
+            case dag_workload_types::e_dwt_multi_task_single_data:
             {
                 multi_task_single_data();
                 break;
             }
-            case dag_workload_types::e_multi_task_multi_data:
+            case dag_workload_types::e_dwt_multi_task_multi_data:
             {
                 multi_task_multi_data();
                 break;
